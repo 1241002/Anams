@@ -53,8 +53,13 @@ public class Curso {
     public List<Modulo> getModulos() { return modulos; }
 
     public void adicionarModulo(Modulo m) { modulos.add(m); }
+    private int estado;   // 0-A iniciar, 1-Ativo, ...
 
     public int getEstado() {
-        return getEstado();
+        return estado;   // ✅ devolve a variável de instância
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 }
