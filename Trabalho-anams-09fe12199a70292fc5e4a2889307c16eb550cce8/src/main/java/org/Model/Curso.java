@@ -8,16 +8,26 @@ public class Curso {
     private String sigla;
     private String descricao;
     private List<Inscricao> inscricoes;
+    private List<Turma> turmas;
 
     public Curso() {
         this.inscricoes = new ArrayList<>();
+        this.turmas = new ArrayList<>();
     }
 
     public void adicionarInscricao(Inscricao inscricao) {
         this.inscricoes.add(inscricao);
     }
+
     public void removerInscricao(Inscricao inscricao) {
-        this.inscricoes.remove(inscricao);
+    }
+
+    public void adicionarTurma(Turma turma) {
+        this.turmas.add(turma);
+    }
+
+    public List<Turma> getTurmas() {
+        return turmas;
     }
 
     public List<Inscricao> getInscricoes() {

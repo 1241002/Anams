@@ -47,8 +47,6 @@ public class ConsultarAlunosCurso_UI {
     }
 
     private Curso findCourseById(String idCurso) {
-        // Este método deve ser implementado para encontrar um curso pelo seu ID
-        // Por exemplo:
         for (Curso curso : controller.listAvailableCourses()) {
             if (curso.getSigla().equals(idCurso)) {
                 return curso;
