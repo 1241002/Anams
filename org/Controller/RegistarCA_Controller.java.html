@@ -1,0 +1,58 @@
+<html>
+<head>
+<title>RegistarCA_Controller.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+RegistarCA_Controller.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Controller</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Model</span><span class="s2">.</span><span class="s1">Empresa</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Model</span><span class="s2">.</span><span class="s1">CoordenadorAcademico</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Model</span><span class="s2">.</span><span class="s1">Credenciais</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Utils</span><span class="s2">.</span><span class="s1">Utils</span><span class="s2">;</span>
+<span class="s0">public class </span><span class="s1">RegistarCA_Controller </span><span class="s2">{</span>
+    <span class="s0">private final </span><span class="s1">Empresa empresa</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">CoordenadorAcademico ca</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">RegistarCA_Controller</span><span class="s2">(</span><span class="s1">Empresa empresa</span><span class="s2">) { </span><span class="s0">this</span><span class="s2">.</span><span class="s1">empresa </span><span class="s2">= </span><span class="s1">empresa</span><span class="s2">; }</span>
+
+    <span class="s0">public void </span><span class="s1">novoCA</span><span class="s2">() { </span><span class="s1">ca </span><span class="s2">= </span><span class="s1">empresa</span><span class="s2">.</span><span class="s1">novoCA</span><span class="s2">(); }</span>
+
+    <span class="s0">public void </span><span class="s1">setDados</span><span class="s2">(</span><span class="s1">String sigla</span><span class="s2">, </span><span class="s1">String nome</span><span class="s2">, </span><span class="s1">String cc</span><span class="s2">, </span><span class="s1">String email</span><span class="s2">, </span><span class="s1">String contacto</span><span class="s2">) {</span>
+        <span class="s1">ca</span><span class="s2">.</span><span class="s1">setSigla</span><span class="s2">(</span><span class="s1">sigla</span><span class="s2">);</span>
+        <span class="s1">ca</span><span class="s2">.</span><span class="s1">setNome</span><span class="s2">(</span><span class="s1">nome</span><span class="s2">);</span>
+        <span class="s1">ca</span><span class="s2">.</span><span class="s1">setCc</span><span class="s2">(</span><span class="s1">cc</span><span class="s2">);</span>
+        <span class="s1">ca</span><span class="s2">.</span><span class="s1">setEmail</span><span class="s2">(</span><span class="s1">email</span><span class="s2">);</span>
+        <span class="s1">ca</span><span class="s2">.</span><span class="s1">setContacto</span><span class="s2">(</span><span class="s1">contacto</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">String geraCredenciais</span><span class="s2">() {</span>
+        <span class="s1">String login </span><span class="s2">= </span><span class="s1">ca</span><span class="s2">.</span><span class="s1">getSigla</span><span class="s2">().</span><span class="s1">toLowerCase</span><span class="s2">();</span>
+        <span class="s1">String password </span><span class="s2">= </span><span class="s1">Utils</span><span class="s2">.</span><span class="s1">geraPassword</span><span class="s2">(</span><span class="s3">5</span><span class="s2">, </span><span class="s3">3</span><span class="s2">, </span><span class="s3">2</span><span class="s2">);   </span><span class="s4">// novo helper</span>
+        <span class="s1">ca</span><span class="s2">.</span><span class="s1">setCredenciais</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Credenciais</span><span class="s2">(</span><span class="s1">login</span><span class="s2">, </span><span class="s1">password</span><span class="s2">));</span>
+        <span class="s0">return </span><span class="s1">login </span><span class="s2">+ </span><span class="s5">&quot; / &quot; </span><span class="s2">+ </span><span class="s1">password</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">registaCA</span><span class="s2">() {</span>
+        <span class="s0">boolean </span><span class="s1">ok </span><span class="s2">= </span><span class="s1">empresa</span><span class="s2">.</span><span class="s1">registaCA</span><span class="s2">(</span><span class="s1">ca</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">ok</span><span class="s2">) </span><span class="s1">empresa</span><span class="s2">.</span><span class="s1">enviarCredenciaisPorEmail</span><span class="s2">(</span><span class="s1">ca</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">ok</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">String getCAAsString</span><span class="s2">() { </span><span class="s0">return </span><span class="s1">ca</span><span class="s2">.</span><span class="s1">toString</span><span class="s2">(); }</span>
+<span class="s2">}</span></pre>
+</body>
+</html>
