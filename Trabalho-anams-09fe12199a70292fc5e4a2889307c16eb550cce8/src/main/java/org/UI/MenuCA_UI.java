@@ -42,6 +42,8 @@ public class MenuCA_UI
             {
                 // Completar
                 System.out.println("Selecionou a opção: Registar formador");
+                RegistarFormadorUI ui = new RegistarFormadorUI(empresa);
+                ui.run();
             }
             else
             if( opcao.equals("3") )
