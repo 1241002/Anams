@@ -53,4 +53,8 @@ public class Curso {
     public List<Modulo> getModulos() { return modulos; }
 
     public void adicionarModulo(Modulo m) { modulos.add(m); }
+
+    public int getEstado() {
+        return getEstado();
+    }
 }

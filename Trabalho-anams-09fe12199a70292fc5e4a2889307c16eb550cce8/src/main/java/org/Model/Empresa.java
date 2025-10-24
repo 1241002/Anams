@@ -147,6 +147,18 @@ public class Empresa
         curso.adicionarModulo(modulo);
         return true;
     }
+    private int estado;   // 0-A iniciar, 1-Ativo, ...
+
+    public int getEstado() { return estado; }
+    public void setEstado(int estado) { this.estado = estado; }
+    /* ---------- consulta por estado ---------- */
+    public List<Curso> filtrarCursosPorEstado(int idx) {
+        List<Curso> resultado = new ArrayList<>();
+        for (Curso c : lstCursos)
+            if (c.getEstado() == idx)
+                resultado.add(c);
+        return resultado;
+    }
 }
     
     

@@ -66,6 +66,11 @@ public class MenuCA_UI
                 AdicionarModulo_UI ui = new AdicionarModulo_UI(empresa);
                 ui.run();
             }
+            else
+            if (opcao.equals("7")) {   // ou próximo livre
+                ConsultarCursosPorEstado_UI ui = new ConsultarCursosPorEstado_UI(empresa);
+                ui.run();
+            }
 
         }
         while (!opcao.equals("0") );
