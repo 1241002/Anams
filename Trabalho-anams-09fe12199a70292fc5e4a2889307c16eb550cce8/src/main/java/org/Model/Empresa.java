@@ -159,6 +159,19 @@ public class Empresa
                 resultado.add(c);
         return resultado;
     }
+    private final List<Matricula> lstMatriculas = new ArrayList<>();
+
+    public void registaMatricula(Matricula m) { lstMatriculas.add(m); }
+
+    public void enviarCredenciaisPorEmail(Matricula m) {
+        System.out.println("\n>>> EMAIL ENVIADO para " + m.getEmail());
+        System.out.println(">>> Login: " + m.getCredenciais().getLogin());
+        System.out.println(">>> Senha: " + m.getCredenciais().getPassword());
+    }
+
+    public void notificarCA(Matricula m) {
+        System.out.println(">>> NOTIFICAÇÃO: Nova matrícula de " + m.getNome() + " (CC: " + m.getCc() + ") pendente de validação.");
+    }
 }
     
     

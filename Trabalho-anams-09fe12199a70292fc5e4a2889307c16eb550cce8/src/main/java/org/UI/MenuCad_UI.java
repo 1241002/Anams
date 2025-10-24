@@ -39,6 +39,11 @@ public class MenuCad_UI
                 // Completar
                 System.out.println("Selecionou a opção: Fazer matricula na Instituição");
             }
+            else
+            if (opcao.equals("1")) {
+                SubmeterMatricula_UI ui = new SubmeterMatricula_UI(empresa);
+                ui.run();
+            }
         }
         while (!opcao.equals("0") );
     }
