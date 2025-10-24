@@ -120,6 +120,33 @@ public class Empresa
         }
         return null;
     }
+
+    private final List<Curso> lstCursos = new ArrayList<>();
+    private final List<Formador> lstFormadores = new ArrayList<>();
+    private int seqModulo = 0;
+
+    public List<Curso> obterListaCursos() { return new ArrayList<>(lstCursos); }
+    public void adicionarCurso(Curso c) { lstCursos.add(c); }
+
+    public List<Formador> obterListaFormadores() { return new ArrayList<>(lstFormadores); }
+    public void adicionarFormador(Formador f) { lstFormadores.add(f); }
+
+    public String gerarCodigoModulo() { return "MOD" + (++seqModulo); }
+
+    public boolean existeSobreposicaoHorario(Formador f, String horario) {
+        for (Curso c : lstCursos)
+            for (Modulo m : c.getModulos())
+                if (m.getFormadorResponsavel().equals(f) &&
+                        m.getHorario().equalsIgnoreCase(horario))
+                    return true;
+        return false;
+    }
+
+    public boolean registaModulo(Curso curso, Modulo modulo) {
+        if (curso == null || modulo == null) return false;
+        curso.adicionarModulo(modulo);
+        return true;
+    }
 }
     
     

@@ -47,4 +47,10 @@ public class Curso {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
+    private final List<Modulo> modulos = new ArrayList<>();
+
+    public List<Modulo> getModulos() { return modulos; }
+
+    public void adicionarModulo(Modulo m) { modulos.add(m); }
 }
