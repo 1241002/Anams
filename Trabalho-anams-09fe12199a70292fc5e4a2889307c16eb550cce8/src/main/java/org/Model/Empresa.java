@@ -120,6 +120,11 @@ public class Empresa
         }
         return null;
     }
+    public List<Aluno> getAlunos() {
+        // Este método deve ser implementado para obter a lista de alunos
+        // Por exemplo:
+        return new ArrayList<>();
+    }
 }
     
     

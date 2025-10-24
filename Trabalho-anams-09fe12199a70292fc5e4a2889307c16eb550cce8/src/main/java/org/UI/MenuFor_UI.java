@@ -37,7 +37,8 @@ public class MenuFor_UI
             else
             if( opcao.equals("2") )
             {
-                // Completar
+                ConsultarAlunosCurso_UI ui = new ConsultarAlunosCurso_UI(empresa);
+                ui.run();
                 System.out.println("Consultar lista de Alunos de um curso");
             }
         }
