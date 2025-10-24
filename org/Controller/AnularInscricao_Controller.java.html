@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>AnularInscricao_Controller.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AnularInscricao_Controller.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Controller</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Model</span><span class="s2">.</span><span class="s1">Aluno</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Model</span><span class="s2">.</span><span class="s1">Curso</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Model</span><span class="s2">.</span><span class="s1">Inscricao</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">Model</span><span class="s2">.</span><span class="s1">Empresa</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">List</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">stream</span><span class="s2">.</span><span class="s1">Collectors</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">AnularInscricao_Controller </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">Empresa empresa</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">AnularInscricao_Controller</span><span class="s2">(</span><span class="s1">Empresa empresa</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">empresa </span><span class="s2">= </span><span class="s1">empresa</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">anularInscricao</span><span class="s2">(</span><span class="s1">String idCurso</span><span class="s2">, </span><span class="s1">Aluno aluno</span><span class="s2">) {</span>
+        <span class="s1">Curso curso </span><span class="s2">= </span><span class="s1">empresa</span><span class="s2">.</span><span class="s1">findCursoById</span><span class="s2">(</span><span class="s1">idCurso</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">curso </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;Curso não encontrado.&quot;</span><span class="s2">);</span>
+            <span class="s0">return false</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">Inscricao inscricao </span><span class="s2">= </span><span class="s1">findInscricaoByIdCurso</span><span class="s2">(</span><span class="s1">aluno</span><span class="s2">, </span><span class="s1">idCurso</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">inscricao </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;Inscrição não encontrada.&quot;</span><span class="s2">);</span>
+            <span class="s0">return false</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">curso</span><span class="s2">.</span><span class="s1">removerInscricao</span><span class="s2">(</span><span class="s1">inscricao</span><span class="s2">);</span>
+        <span class="s1">aluno</span><span class="s2">.</span><span class="s1">removerInscricao</span><span class="s2">(</span><span class="s1">inscricao</span><span class="s2">);</span>
+
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s3">&quot;Inscrição anulada com sucesso.&quot;</span><span class="s2">);</span>
+        <span class="s0">return true</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private </span><span class="s1">Inscricao findInscricaoByIdCurso</span><span class="s2">(</span><span class="s1">Aluno aluno</span><span class="s2">, </span><span class="s1">String idCurso</span><span class="s2">) {</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">Inscricao inscricao </span><span class="s2">: </span><span class="s1">aluno</span><span class="s2">.</span><span class="s1">getInscricoes</span><span class="s2">()) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">inscricao</span><span class="s2">.</span><span class="s1">getCurso</span><span class="s2">().</span><span class="s1">getSigla</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">idCurso</span><span class="s2">)) {</span>
+                <span class="s0">return </span><span class="s1">inscricao</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">return null</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Curso</span><span class="s2">&gt; </span><span class="s1">listInscricoesDoAluno</span><span class="s2">(</span><span class="s1">Aluno aluno</span><span class="s2">) {</span>
+        <span class="s0">return </span><span class="s1">aluno</span><span class="s2">.</span><span class="s1">getInscricoes</span><span class="s2">().</span><span class="s1">stream</span><span class="s2">()</span>
+                <span class="s2">.</span><span class="s1">map</span><span class="s2">(</span><span class="s1">Inscricao::getCurso</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">distinct</span><span class="s2">()</span>
+                <span class="s2">.</span><span class="s1">collect</span><span class="s2">(</span><span class="s1">Collectors</span><span class="s2">.</span><span class="s1">toList</span><span class="s2">());</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>
