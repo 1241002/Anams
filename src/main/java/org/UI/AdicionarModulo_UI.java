@@ -3,6 +3,7 @@ package org.UI;
 import org.Controller.AdicionarModuloController;
 import org.Model.*;
 import org.Utils.Utils;
+import org.Utils.Data;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,8 +27,8 @@ public class AdicionarModulo_UI {
 
         String titulo = Utils.readLineFromConsole("Título do módulo: ");
         int ch      = Integer.parseInt(Utils.readLineFromConsole("Carga horária: "));
-        String dataI= Utils.readLineFromConsole("Data início (dd-MM-yyyy): ");
-        String dataF= Utils.readLineFromConsole("Data fim (dd-MM-yyyy): ");
+        Data dataI = Utils.readDataFromConsole("Data início (dd-MM-yyyy): ");
+        Data dataF = Utils.readDataFromConsole("Data fim (dd-MM-yyyy): ");
         String hora = Utils.readLineFromConsole("Horário (ex: Seg 14h-16h): ");
 
         List<Formador> formadores = ctrl.obterFormadores();

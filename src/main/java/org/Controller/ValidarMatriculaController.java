@@ -36,7 +36,5 @@ public class ValidarMatriculaController {
         empresa.enviarNotificacao(candidaturaSelecionada, "REJEITADA");
     }
 
-    public String getCandidaturaAsString() {
-        return candidaturaSelecionada.toString();
-    }
+    public String getCandidaturaAsString() { return candidaturaSelecionada.toString(); }
 }

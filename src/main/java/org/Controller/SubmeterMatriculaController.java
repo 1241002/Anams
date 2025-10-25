@@ -31,7 +31,7 @@ public class SubmeterMatriculaController {
 
     public boolean confirmarRegisto() {
         if (matricula == null) return false;
-        empresa.registaMatricula(matricula);           // guarda
+        empresa.registaMatricula(matricula);           // guarda em memória
         empresa.enviarCredenciaisPorEmail(matricula);  // simula email
         empresa.notificarCA(matricula);                // simula notificação
         return true;

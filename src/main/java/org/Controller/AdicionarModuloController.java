@@ -1,6 +1,7 @@
 package org.Controller;
 
 import org.Model.*;
+import org.Utils.Data;
 import java.util.List;
 
 public class AdicionarModuloController {
@@ -19,19 +20,18 @@ public class AdicionarModuloController {
         if (idx >= 0 && idx < c.size()) cursoSelecionado = c.get(idx);
     }
 
-    public void criarModulo(String titulo, int ch, String dataI, String dataF,
+    public void criarModulo(String titulo, int ch, Data dataI, Data dataF,
                             String horario, Formador formador) {
         modulo = new Modulo();
         modulo.setTitulo(titulo);
         modulo.setCargaHoraria(ch);
-        modulo.setDataInicio(dataI);
-        modulo.setDataConclusao(dataF);
+        modulo.setDataInicio(dataI);      // Data
+        modulo.setDataConclusao(dataF);   // Data
         modulo.setHorario(horario);
         modulo.setFormadorResponsavel(formador);
         modulo.setCodigo(empresa.gerarCodigoModulo());
     }
 
-    /* ---- única verificação: sobreposição de horário ---- */
     public boolean dadosOk() {
         return !empresa.existeSobreposicaoHorario(modulo.getFormadorResponsavel(), modulo.getHorario());
     }
