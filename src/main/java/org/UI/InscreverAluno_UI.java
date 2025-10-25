@@ -36,10 +36,13 @@ public class InscreverAluno_UI {
 
     private void listAvailableCourses() {
         List<Curso> cursos = controller.listAvailableCourses();
-        System.out.println("Cursos disponíveis:");
-        for (int i = 0; i < cursos.size(); i++) {
-            Curso curso = cursos.get(i);
-            System.out.println((i + 1) + ". " + curso.getTitulo());
+        if (cursos.isEmpty()) {
+            System.out.println("Nenhum curso disponível.");
+            return;
         }
+        int idx = 0;
+        for (Curso c : cursos) System.out.println(++idx + ". " + c.getTitulo() + " [" + c.getSigla() + "]");
+        int esc = Integer.parseInt(Utils.readLineFromConsole("Escolha o curso (nº): ")) - 1;
+        String idCurso = cursos.get(esc).getSigla();
     }
 }

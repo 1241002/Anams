@@ -8,16 +8,17 @@ public class ConsultarCursosPorEstadoController {
 
     private final Empresa empresa;
 
+    // Construtor: recebe a empresa para aceder aos cursos
     public ConsultarCursosPorEstadoController(Empresa empresa) {
         this.empresa = empresa;
     }
 
-    /* devolve os 5 estados possíveis */
+    // Devolve os 5 nomes dos estados de curso (ex: "Planeado", "Aberto", ...)
     public String[] obterOpcoesEstado() {
         return org.Model.EstadoCurso.NOMES;
     }
 
-    /* cursos REAIS de um estado (0-4) */
+    // Devolve a lista de cursos reais num estado específico (índice 0 a 4)
     public List<Curso> obterCursosPorEstado(int idx) {
         return empresa.filtrarCursosPorEstado(idx);
     }

@@ -8,28 +8,22 @@ import org.Utils.Utils;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 public class ConsultarCursosFormador_UI {
-    private ConsultarCursosFormador_Controller controller;
-    private Scanner scanner = new Scanner(System.in);
+    private final ConsultarCursosFormador_Controller controller;
+    private final Empresa empresa;
 
     public ConsultarCursosFormador_UI(Empresa empresa) {
+        this.empresa = empresa;
         this.controller = new ConsultarCursosFormador_Controller(empresa);
     }
 
     public void run() throws IOException {
         System.out.println("Consultar Cursos Atribuídos a um Formador");
-
-        String nomeFormador = Utils.readLineFromConsole("Digite o nome do formador: ");
-        Formador formador = new Formador();
-        formador.setNome(nomeFormador);
-
-        List<Curso> cursos = controller.obterCursosDoFormador(formador);
-        System.out.println("Cursos atribuídos ao formador:");
-        for (int i = 0; i < cursos.size(); i++) {
-            Curso curso = cursos.get(i);
-            System.out.println((i + 1) + ". " + curso.getTitulo());
-        }
+        List<Formador> formadores = empresa.obterListaFormadores();
+        for (int i = 0; i < formadores.size(); i++) System.out.println((i+1) + ". " + formadores.get(i).getNome());
+        int i = Integer.parseInt(Utils.readLineFromConsole("Formador nº: ")) - 1;
+        List<Curso> cursos = controller.obterCursosDoFormador(formadores.get(i));
+        for (int j = 0; j < cursos.size(); j++) System.out.println((j+1) + ". " + cursos.get(j).getTitulo());
     }
 }

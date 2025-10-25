@@ -20,21 +20,11 @@ public class ConsultarAlunosCurso_UI {
 
     public void run() throws IOException {
         System.out.println("Consultar Alunos de um Curso");
-        listAvailableCourses();
-
-        String idCurso = Utils.readLineFromConsole("Digite o ID do curso: ");
-        Curso curso = findCourseById(idCurso);
-
-        if (curso != null) {
-            List<Aluno> alunos = controller.obterAlunosDoCurso(curso);
-            System.out.println("Alunos inscritos no curso:");
-            for (int i = 0; i < alunos.size(); i++) {
-                Aluno aluno = alunos.get(i);
-                System.out.println((i + 1) + ". " + aluno.getNome());
-            }
-        } else {
-            System.out.println("Curso não encontrado.");
-        }
+        List<Curso> cursos = controller.listAvailableCourses();
+        for (int i = 0; i < cursos.size(); i++) System.out.println((i+1) + ". " + cursos.get(i).getTitulo());
+        int i = Integer.parseInt(Utils.readLineFromConsole("Curso nº: ")) - 1;
+        List<Aluno> alunos = controller.obterAlunosDoCurso(cursos.get(i));
+        for (int j = 0; j < alunos.size(); j++) System.out.println((j+1) + ". " + alunos.get(j).getNome());
     }
 
     private void listAvailableCourses() {

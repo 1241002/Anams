@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 public class AnularInscricao_Controller {
     private Empresa empresa;
 
+    // Construtor: recebe a empresa para aceder aos cursos e dados
     public AnularInscricao_Controller(Empresa empresa) {
         this.empresa = empresa;
     }
 
+    // Anula a inscrição do aluno num curso (pelo ID/sigla do curso)
     public boolean anularInscricao(String idCurso, Aluno aluno) {
         Curso curso = empresa.findCursoById(idCurso);
         if (curso == null) {
@@ -35,6 +37,7 @@ public class AnularInscricao_Controller {
         return true;
     }
 
+    // Procura a inscrição do aluno num curso específico (pelo ID do curso)
     private Inscricao findInscricaoByIdCurso(Aluno aluno, String idCurso) {
         for (Inscricao inscricao : aluno.getInscricoes()) {
             if (inscricao.getCurso().getSigla().equals(idCurso)) {
@@ -44,6 +47,7 @@ public class AnularInscricao_Controller {
         return null;
     }
 
+    // Devolve a lista de cursos em que o aluno está inscrito (sem duplicados)
     public List<Curso> listInscricoesDoAluno(Aluno aluno) {
         return aluno.getInscricoes().stream()
                 .map(Inscricao::getCurso)
