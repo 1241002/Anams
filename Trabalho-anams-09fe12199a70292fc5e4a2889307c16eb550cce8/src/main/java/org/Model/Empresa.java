@@ -172,6 +172,28 @@ public class Empresa
     public void notificarCA(Matricula m) {
         System.out.println(">>> NOTIFICAÇÃO: Nova matrícula de " + m.getNome() + " (CC: " + m.getCc() + ") pendente de validação.");
     }
+
+
+    public List<Matricula> filtrarMatriculasPorEstado(int estado) {
+        List<Matricula> resultado = new ArrayList<>();
+        for (Matricula m : lstMatriculas)
+            if (m.getEstado() == estado)
+                resultado.add(m);
+        return resultado;
+    }
+
+    public void atualizarMatricula(Matricula m) {
+    }
+
+    public void enviarNotificacao(Matricula m, String estado) {
+        System.out.println("\n>>> EMAIL ENVIADO para " + m.getEmail());
+        if ("REJEITADA".equals(estado))
+            System.out.println(">>> A sua matrícula foi REJEITADA.");
+        else
+            System.out.println(">>> A sua matrícula foi ACEITE.");
+        if (m.getJustificacao() != null)
+            System.out.println(">>> Justificativo: " + m.getJustificacao());
+    }
 }
     
     

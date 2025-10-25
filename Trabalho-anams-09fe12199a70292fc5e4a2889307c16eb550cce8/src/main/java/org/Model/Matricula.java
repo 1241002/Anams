@@ -31,4 +31,11 @@ public class Matricula {
     public String toString() {
         return String.format("Matrícula: %s | CC: %s | Email: %s", nome, cc, email);
     }
+    private int estado = EstadoMatricula.PENDENTE;
+    private String justificacao;
+
+    public int getEstado() { return estado; }
+    public void setEstado(int estado) { this.estado = estado; }
+    public String getJustificacao() { return justificacao; }
+    public void setJustificacao(String justificacao) { this.justificacao = justificacao; }
 }

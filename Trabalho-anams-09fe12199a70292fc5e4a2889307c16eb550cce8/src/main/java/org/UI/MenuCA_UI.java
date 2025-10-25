@@ -71,6 +71,11 @@ public class MenuCA_UI
                 ConsultarCursosPorEstado_UI ui = new ConsultarCursosPorEstado_UI(empresa);
                 ui.run();
             }
+            else
+            if (opcao.equals("8")) {   // ou próximo livre
+                ValidarMatricula_UI ui = new ValidarMatricula_UI(empresa);
+                ui.run();
+            }
 
         }
         while (!opcao.equals("0") );
