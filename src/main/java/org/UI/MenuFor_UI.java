@@ -23,6 +23,7 @@ public class MenuFor_UI
             System.out.println("###### MENU #####\n\n");
             System.out.println("1. Consultar lista de cursos (responsável)");
             System.out.println("2. Consultar lista de alunos de um curso");
+            System.out.println("3. Registar formador");  // <-- UC3
 
             System.out.println("0. Voltar");
 
@@ -37,8 +38,13 @@ public class MenuFor_UI
             else
             if( opcao.equals("2") )
             {
-                // Completar
+                ConsultarAlunosCurso_UI ui = new ConsultarAlunosCurso_UI(empresa);
+                ui.run();
                 System.out.println("Consultar lista de Alunos de um curso");
+                // TODO: implementar quando quiseres
+            } else if (opcao.equals("3")) {  // <-- UC3
+                RegistarFormadorUI ui = new RegistarFormadorUI(empresa);
+                ui.run();
             }
         }
         while (!opcao.equals("0") );
