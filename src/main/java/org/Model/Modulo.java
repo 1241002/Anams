@@ -1,22 +1,17 @@
 package org.Model;
 
-
-import org.Utils.Data;
-
 public class Modulo {
-    private String codigo;           // gerado automaticamente
+
+    private String codigo;
     private String titulo;
     private int cargaHoraria;
-    private Data dataInicio;         // tua classe Data
-    private Data dataFim;            // tua classe Data
-    private String sala;
-    private Formador formador;
+    private org.Utils.Data dataInicio;
+    private org.Utils.Data dataConclusao;
+    private String horario;
+    private Formador formadorResponsavel;
 
-    public Modulo() {
-        this.codigo = "";
-    }
+    public Modulo() {}
 
-    // === Getters & Setters ===
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
 
@@ -26,31 +21,22 @@ public class Modulo {
     public int getCargaHoraria() { return cargaHoraria; }
     public void setCargaHoraria(int cargaHoraria) { this.cargaHoraria = cargaHoraria; }
 
-    public Data getDataInicio() { return dataInicio; }
-    public void setDataInicio(Data dataInicio) { this.dataInicio = dataInicio; }
+    public org.Utils.Data getDataInicio() { return dataInicio; }
+    public void setDataInicio(org.Utils.Data dataInicio) { this.dataInicio = dataInicio; }
 
-    public Data getDataFim() { return dataFim; }
-    public void setDataFim(Data dataFim) { this.dataFim = dataFim; }
+    public org.Utils.Data getDataConclusao() { return dataConclusao; }
+    public void setDataConclusao(org.Utils.Data dataConclusao) { this.dataConclusao = dataConclusao; }
 
-    public String getSala() { return sala; }
-    public void setSala(String sala) { this.sala = sala; }
+    public String getHorario() { return horario; }
+    public void setHorario(String horario) { this.horario = horario; }
 
-    public Formador getFormador() { return formador; }
-    public void setFormador(Formador formador) { this.formador = formador; }
-
-    public boolean valida() {
-        return titulo != null && !titulo.trim().isEmpty()
-                && cargaHoraria > 0
-                && dataInicio != null && dataFim != null
-                && dataInicio.compareTo(dataFim) <= 0  // usa o teu compareTo
-                && sala != null && !sala.trim().isEmpty()
-                && formador != null;
-    }
+    public Formador getFormadorResponsavel() { return formadorResponsavel; }
+    public void setFormadorResponsavel(Formador formador) { this.formadorResponsavel = formador; }
 
     @Override
     public String toString() {
-        return String.format("[%s] %s | %d h | %s a %s | Sala: %s | Formador: %s",
-                codigo, titulo, cargaHoraria, dataInicio, dataFim, sala,
-                formador != null ? formador.getNome() : "n/a");
+        return "Módulo: " + codigo + " | " + titulo + " | CH: " + cargaHoraria +
+                " | Início: " + dataInicio + " | Fim: " + dataConclusao +
+                " | Horário: " + horario + " | Formador: " + formadorResponsavel.getNome();
     }
 }
