@@ -1,5 +1,6 @@
 package org.Model;
 
+import org.Utils.Data;  // tua classe Data
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,13 +13,13 @@ public class Curso {
 
     public Curso() {
         this.inscricoes = new ArrayList<>();
+        this.modulos = new ArrayList<>();
         this.turmas = new ArrayList<>();
     }
 
     public void adicionarInscricao(Inscricao inscricao) {
         this.inscricoes.add(inscricao);
     }
-
     public void removerInscricao(Inscricao inscricao) {
     }
 
@@ -46,12 +47,20 @@ public class Curso {
         return sigla;
     }
 
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
-    }
-
-    public String getDescricao() {
-        return descricao;
+    // === toString melhorado (funciona com Data.toString()) ===
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Curso: ").append(titulo).append(" (").append(sigla).append(")\n");
+        sb.append("Tipo: ").append(tipo != null ? tipo.getDesignacao() : "n/a").append("\n");
+        sb.append("Descrição: ").append(descricao).append("\n");
+        sb.append("Período: ").append(dataInicio).append(" a ").append(dataFim).append("\n");
+        sb.append("Módulos (").append(modulos.size()).append("):\n");
+        for (Modulo m : modulos) {
+            sb.append("  - ").append(m).append("\n");
+        }
+        sb.append("Inscrições: ").append(inscricoes.size()).append(" aluno(s)\n");
+        return sb.toString();
     }
 
     public void setDescricao(String descricao) {

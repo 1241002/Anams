@@ -6,6 +6,8 @@
 
 package org.Model;
 
+import org.Utils.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,40 +21,82 @@ public class Empresa
     private final List<TipoCurso> lstTiposCurso;
     private final List<CoordenadorAcademico> lstCA;
     private final List<Curso> cursos;
-    // Completar
-    public Empresa()
-    {
+    private final List<Formador> lstFormadores;
+
+    public Empresa() {
         this.lstTiposCurso = new ArrayList<>();
         this.lstCA = new ArrayList<>();
         this.cursos = new ArrayList<>();
+        this.lstFormadores = new ArrayList<>();
     }
-  
-    public TipoCurso novoTipoCurso()
-    {
+
+    // ==================== UC3: REGISTAR FORMADOR ====================
+
+    public Formador novoFormador() {
+        return new Formador();
+    }
+
+    public void gerarIdentificadorECredenciais(Formador formador) {
+        // Identificador único
+        String identificadorUnico = "FOR-" + String.valueOf(System.currentTimeMillis());
+        formador.setIdentificadorUnico(identificadorUnico);
+
+        // Login: primeira parte do email (antes do @)
+        String login = formador.getEmail().split("@")[0];
+        // Password: 6 caracteres aleatórios (4 letras + 2 dígitos)
+        String password = Utils.geraPassword(6, 4, 2);
+
+        formador.setCredenciais(new Credenciais(login, password));
+
+        // Simulação de envio de e-mail
+        System.out.println("\n>>> EMAIL ENVIADO para " + formador.getEmail());
+        System.out.println(">>> Login: " + login);
+        System.out.println(">>> Password: " + password);
+    }
+
+    public boolean registaFormador(Formador formador) {
+        // por completar: validação completa (campos obrigatórios, formato de email, etc.)
+        if (emailJaExiste(formador.getEmail())) {
+            return false;
+        }
+
+        gerarIdentificadorECredenciais(formador);
+        lstFormadores.add(formador);
+        return true;
+    }
+
+    private boolean emailJaExiste(String email) {
+        return lstFormadores.stream()
+                .anyMatch(f -> f.getEmail().equalsIgnoreCase(email));
+    }
+
+    public List<Formador> obterListaFormadores() {
+        return new ArrayList<>(lstFormadores);
+    }
+
+    // ==================== OUTROS MÉTODOS (mantidos inalterados) ====================
+
+    public TipoCurso novoTipoCurso() {
         return new TipoCurso();
     }
-    public boolean especificarTipoCurso(TipoCurso tipoCurso)
-    {
-        if (this.valida(tipoCurso))
-        {
-           adicionarTipoCurso(tipoCurso);
-           return true;
+
+    public boolean especificarTipoCurso(TipoCurso tipoCurso) {
+        if (this.valida(tipoCurso)) {
+            adicionarTipoCurso(tipoCurso);
+            return true;
         }
         return false;
     }
-        
-    private void adicionarTipoCurso(TipoCurso tipoCurso){
+
+    private void adicionarTipoCurso(TipoCurso tipoCurso) {
         lstTiposCurso.add(tipoCurso);
     }
-    // Validação global
-    public boolean valida(TipoCurso tipoCurso)
-    {
+
+    public boolean valida(TipoCurso tipoCurso) {
         boolean resp = false;
-        if (tipoCurso.valida())
-        {
-           // Completar        
-           //
-           resp = true; 
+        if (tipoCurso.valida()) {
+            // por completar: regras de negócio adicionais
+            resp = true;
         }
         return resp;
     }
@@ -71,7 +115,8 @@ public class Empresa
 
     /* -------------------------------------------------- */
     public CoordenadorAcademico novoCA() {
-        return new CoordenadorAcademico(); }
+        return new CoordenadorAcademico();
+    }
 
     public boolean registaCA(CoordenadorAcademico ca) {
         if (validaCA(ca)) {
