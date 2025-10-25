@@ -8,62 +8,44 @@ public class Curso {
     private String titulo;
     private String sigla;
     private String descricao;
-
-    // === UC4: Novos campos (agora com Data) ===
-    private TipoCurso tipo;
-    private Data dataInicio;  // tua classe
-    private Data dataFim;     // tua classe
-    private final List<Modulo> modulos;
-
-    // === Original: Inscrições (mantido inalterado) ===
     private List<Inscricao> inscricoes;
+    private List<Turma> turmas;
 
     public Curso() {
         this.inscricoes = new ArrayList<>();
         this.modulos = new ArrayList<>();
+        this.turmas = new ArrayList<>();
     }
 
-    // === UC4: Getters & Setters (atualizados para Data) ===
-    public TipoCurso getTipo() { return tipo; }
-    public void setTipo(TipoCurso tipo) { this.tipo = tipo; }
-
-    public Data getDataInicio() { return dataInicio; }
-    public void setDataInicio(Data dataInicio) { this.dataInicio = dataInicio; }
-
-    public Data getDataFim() { return dataFim; }
-    public void setDataFim(Data dataFim) { this.dataFim = dataFim; }
-
-    public List<Modulo> getModulos() { return new ArrayList<>(modulos); }
-
-    public boolean adicionarModulo(Modulo modulo) {
-        if (modulo != null && modulo.valida()) {
-            return modulos.add(modulo);
-        }
-        return false;
-    }
-
-    // === Original: Métodos de inscrição (mantidos 100%) ===
     public void adicionarInscricao(Inscricao inscricao) {
         this.inscricoes.add(inscricao);
     }
-
     public void removerInscricao(Inscricao inscricao) {
-        this.inscricoes.remove(inscricao);
+    }
+
+    public void adicionarTurma(Turma turma) {
+        this.turmas.add(turma);
+    }
+
+    public List<Turma> getTurmas() {
+        return turmas;
     }
 
     public List<Inscricao> getInscricoes() {
         return inscricoes;
     }
 
-    // === Getters & Setters originais (mantidos) ===
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public String getTitulo() {
+        return titulo;
+    }
 
-    public String getSigla() { return sigla; }
-    public void setSigla(String sigla) { this.sigla = sigla; }
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public String getSigla() {
+        return sigla;
+    }
 
     // === toString melhorado (funciona com Data.toString()) ===
     @Override
@@ -79,5 +61,9 @@ public class Curso {
         }
         sb.append("Inscrições: ").append(inscricoes.size()).append(" aluno(s)\n");
         return sb.toString();
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 }
