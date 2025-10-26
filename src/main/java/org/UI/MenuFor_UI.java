@@ -38,8 +38,9 @@ public class MenuFor_UI
             // Processa a opção 1 – Consultar cursos em que é responsável
             if (opcao.equals("1"))
             {
-                ConsultarCursosPorEstado_UI ui = new ConsultarCursosPorEstado_UI(empresa);
-                ui.run();   // Inicia a UI de consulta de cursos por estado
+                // CORREÇÃO: Chamava ConsultarCursosPorEstado_UI
+                ConsultarCursosFormador_UI ui = new ConsultarCursosFormador_UI(empresa);
+                ui.run();   // Inicia a UI de consulta de cursos do formador
                 System.out.println("Selecionou a opção: Consultar lista de cursos (responsável)");
             }
             // Processa a opção 2 – Consultar alunos de um curso
