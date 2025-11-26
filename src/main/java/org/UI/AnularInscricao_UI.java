@@ -1,44 +1,63 @@
 package org.UI;
 
 import org.Controller.AnularInscricao_Controller;
-import org.Model.Aluno;
-import org.Model.Curso;
 import org.Model.Empresa;
+import org.Model.Inscricao; // Importante: Agora lidamos com Inscrições
 import org.Utils.Utils;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 public class AnularInscricao_UI {
-    private AnularInscricao_Controller controller;
-    private Scanner scanner = new Scanner(System.in);
+    private final AnularInscricao_Controller controller;
 
     public AnularInscricao_UI(Empresa empresa) {
         this.controller = new AnularInscricao_Controller(empresa);
     }
 
     public void run() throws IOException {
-        System.out.println("Anular Inscrição de Aluno em Curso");
-        listInscricoesDoAluno();
+        System.out.println("\n=== Anular Inscrição ===");
 
-        String idCurso = Utils.readLineFromConsole("Digite o ID do curso: ");
-        Aluno aluno = new Aluno();
-        aluno.setNome(Utils.readLineFromConsole("Digite o nome do aluno: "));
+        // 1. Pedir o nome do aluno primeiro para saber o que listar
+        String nomeAluno = Utils.readLineFromConsole("Digite o nome do aluno: ");
 
-        if (controller.anularInscricao(idCurso, aluno)) {
-            System.out.println("Inscrição anulada com sucesso.");
-        } else {
-            System.out.println("Falha na anulação.");
+        // 2. Listar as inscrições ativas desse aluno
+        if (!listInscricoesDoAluno(nomeAluno)) {
+            return; // Se não tem inscrições, sai
+        }
+
+        // 3. Pedir o ID do curso a anular
+        String idCurso = Utils.readLineFromConsole("Digite a Sigla/ID do curso a anular: ");
+
+        // 4. Confirmar
+        if (Utils.confirma("Tem a certeza que deseja anular esta inscrição? (S/N)")) {
+            // 5. Executar a anulação
+            if (controller.anularInscricao(idCurso, nomeAluno)) {
+                System.out.println("Inscrição anulada com sucesso.");
+            } else {
+                System.out.println("Falha na anulação: Curso não encontrado ou prazo expirado.");
+            }
         }
     }
 
-    private void listInscricoesDoAluno() {
-        List<Curso> cursos = controller.listInscricoesDoAluno(new Aluno()); // Corrigido aqui
-        System.out.println("Cursos inscritos:");
-        for (int i = 0; i < cursos.size(); i++) {
-            Curso curso = cursos.get(i);
-            System.out.println((i + 1) + ". " + curso.getTitulo());
+    private boolean listInscricoesDoAluno(String nomeAluno) {
+        // O Controller devolve a lista de INSCRIÇÕES (não cursos diretos)
+        List<Inscricao> inscricoes = controller.listInscricoesDoAluno(nomeAluno);
+
+        if (inscricoes.isEmpty()) {
+            System.out.println("Este aluno não tem inscrições ativas registadas.");
+            return false;
         }
+
+        System.out.println("\n--- Inscrições Ativas ---");
+        for (Inscricao insc : inscricoes) {
+            // Acede ao Curso através da Inscrição para mostrar o Título
+            System.out.printf("- [%s] %s (Estado: %s)\n",
+                    insc.getCurso().getSigla(),
+                    insc.getCurso().getTitulo(),
+                    insc.getEstado());
+        }
+        System.out.println();
+        return true;
     }
 }

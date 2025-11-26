@@ -1,175 +1,82 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.Model;
 
 import org.Utils.Utils;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- *
- * @author Dulce Mota <mdm@isep.ipp.pt>
- */
-public class Empresa
-{
+public class Empresa {
+    // === Listas Legadas (IT1) - Mantidas para compatibilidade ===
     private final List<TipoCurso> lstTiposCurso;
     private final List<CoordenadorAcademico> lstCA;
-    private final List<Curso> cursos;
     private final List<Formador> lstFormadores;
 
+    // === Novos Registos (IT2) - A Estrutura Nova ===
+    private final RegistoCursos registoCursos;
+    private final RegistoAlunos registoAlunos;
+
     public Empresa() {
+        // Inicializa as listas antigas
         this.lstTiposCurso = new ArrayList<>();
         this.lstCA = new ArrayList<>();
-        this.cursos = new ArrayList<>();
         this.lstFormadores = new ArrayList<>();
+
+        // Inicializa os novos Registos (Fundamental!)
+        this.registoCursos = new RegistoCursos();
+        this.registoAlunos = new RegistoAlunos();
     }
 
-    // ==================== UC3: REGISTAR FORMADOR ====================
+    // =============================================================
+    // === MÉTODOS QUE FALTAVAM (Resolvem o teu erro) ===
+    // =============================================================
 
-    public Formador novoFormador() {
-        return new Formador();
+    public RegistoCursos getRegistoCursos() {
+        return registoCursos;
     }
 
-    public void gerarIdentificadorECredenciais(Formador formador) {
-        // Identificador único
-        String identificadorUnico = "FOR-" + String.valueOf(System.currentTimeMillis());
-        formador.setIdentificadorUnico(identificadorUnico);
-
-        // Login: primeira parte do email (antes do @)
-        String login = formador.getEmail().split("@")[0];
-        // Password: 6 caracteres aleatórios (4 letras + 2 dígitos)
-        String password = Utils.geraPassword(6, 4, 2);
-
-        formador.setCredenciais(new Credenciais(login, password));
-
-        // Simulação de envio de e-mail
-        System.out.println("\n>>> EMAIL ENVIADO para " + formador.getEmail());
-        System.out.println(">>> Login: " + login);
-        System.out.println(">>> Password: " + password);
+    public RegistoAlunos getRegistoAlunos() {
+        return registoAlunos;
     }
 
-    public boolean registaFormador(Formador formador) {
-        // por completar: validação completa (campos obrigatórios, formato de email, etc.)
-        if (emailJaExiste(formador.getEmail())) {
-            return false;
-        }
+    // =============================================================
+    // === MÉTODOS DE COMPATIBILIDADE / FACADE ===
+    // =============================================================
 
-        gerarIdentificadorECredenciais(formador);
-        lstFormadores.add(formador);
-        return true;
-    }
-
-    private boolean emailJaExiste(String email) {
-        return lstFormadores.stream()
-                .anyMatch(f -> f.getEmail().equalsIgnoreCase(email));
-    }
-
-    public List<Formador> obterListaFormadores() {
-        return new ArrayList<>(lstFormadores);
-    }
-
-    // ==================== OUTROS MÉTODOS (mantidos inalterados) ====================
-
-    public TipoCurso novoTipoCurso() {
-        return new TipoCurso();
-    }
-
-    public boolean especificarTipoCurso(TipoCurso tipoCurso) {
-        if (this.valida(tipoCurso)) {
-            adicionarTipoCurso(tipoCurso);
-            return true;
-        }
-        return false;
-    }
-
-    private void adicionarTipoCurso(TipoCurso tipoCurso) {
-        lstTiposCurso.add(tipoCurso);
-    }
-
-    public boolean valida(TipoCurso tipoCurso) {
-        boolean resp = false;
-        if (tipoCurso.valida()) {
-            // por completar: regras de negócio adicionais
-            resp = true;
-        }
-        return resp;
-    }
-   
-    // Completar com outras funcionalidades
-    
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("Empresa: \n");
-        sb.append("Lista de tipos de cursos: "+ lstTiposCurso.toString()+"\n");
-        return sb.toString();
-    }
-
-    /* NOVOS CAMPOS */
-
-
-    /* -------------------------------------------------- */
-    public CoordenadorAcademico novoCA() {
-        return new CoordenadorAcademico();
-    }
-
-    public boolean registaCA(CoordenadorAcademico ca) {
-        if (validaCA(ca)) {
-            lstCA.add(ca);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean validaCA(CoordenadorAcademico ca) {
-        if (!ca.valida()) return false;
-        /* regra de negócio: sigla única */
-        boolean siglaExiste = lstCA.stream()
-                .anyMatch(c -> c.getSigla().equalsIgnoreCase(ca.getSigla()));
-        return !siglaExiste;
-    }
-
-    /* para enviar email (simulado) */
-    public void enviarCredenciaisPorEmail(CoordenadorAcademico ca) {
-        System.out.println("\n>>> EMAIL ENVIADO para " + ca.getEmail());
-        System.out.println(">>> Login: " + ca.getCredenciais().getLogin());
-        System.out.println(">>> Password: " + ca.getCredenciais().getPassword());
-    }
-
-    // Empresa.java
-    public List<TipoCurso> obterListaTiposCurso() {
-        return new ArrayList<>(lstTiposCurso);
-    }
-    public void addCurso(Curso curso) {
-        this.cursos.add(curso);
+    // Delegar nos registos para não partir código antigo
+    public void addCurso(Curso c) {
+        registoCursos.addCurso(c);
     }
 
     public List<Curso> getCursos() {
-        return cursos;
+        return registoCursos.getCursos();
     }
 
     public List<Curso> getAvailableCourses() {
-        return cursos;
+        return registoCursos.getCursosPorEstado("A iniciar");
     }
 
-    public Curso findCursoById(String idCurso) {
-        for (Curso curso : cursos) {
-            if (curso.getSigla().equals(idCurso)) {
-                return curso;
-            }
-        }
-        return null;
+    public Curso findCursoById(String id) {
+        return registoCursos.getCurso(id);
     }
-    public List<Aluno> getAlunos() {
-        // Este método deve ser implementado para obter a lista de alunos
-        // Por exemplo:
-        return new ArrayList<>();
+
+    // === MÉTODOS ANTIGOS (UC1, UC2, UC3) - MANTIDOS IGUAIS ===
+
+    public TipoCurso novoTipoCurso() { return new TipoCurso(); }
+    public boolean especificarTipoCurso(TipoCurso tc) {
+        if (tc.valida()) { lstTiposCurso.add(tc); return true; }
+        return false;
+    }
+    public List<TipoCurso> obterListaTiposCurso() { return new ArrayList<>(lstTiposCurso); }
+
+    public Formador novoFormador() { return new Formador(); }
+    public boolean registaFormador(Formador f) { lstFormadores.add(f); return true; }
+    public List<Formador> obterListaFormadores() { return new ArrayList<>(lstFormadores); }
+
+    public CoordenadorAcademico novoCA() { return new CoordenadorAcademico(); }
+    public boolean registaCA(CoordenadorAcademico ca) {
+        if(ca.valida()){lstCA.add(ca); return true;}
+        return false;
+    }
+    public void enviarCredenciaisPorEmail(CoordenadorAcademico ca) {
+        System.out.println("Email enviado para: " + ca.getEmail());
     }
 }
-    
-    

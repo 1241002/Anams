@@ -1,53 +1,67 @@
 package org.Controller;
 
-import org.Model.Aluno;
-import org.Model.Curso;
-import org.Model.Inscricao;
-import org.Model.Empresa;
-
+import org.Model.*;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 public class AnularInscricao_Controller {
-    private Empresa empresa;
+    private final RegistoAlunos registoAlunos;
+    private final RegistoCursos registoCursos;
 
     public AnularInscricao_Controller(Empresa empresa) {
-        this.empresa = empresa;
+        // Obtém acesso aos registos através da Empresa
+        this.registoAlunos = empresa.getRegistoAlunos();
+        this.registoCursos = empresa.getRegistoCursos();
     }
 
-    public boolean anularInscricao(String idCurso, Aluno aluno) {
-        Curso curso = empresa.findCursoById(idCurso);
+    public List<Inscricao> listInscricoesDoAluno(String nomeAluno) {
+        // Busca o aluno real no registo pelo nome
+        Aluno aluno = registoAlunos.getAluno(nomeAluno);
+        if (aluno == null) {
+            return new ArrayList<>();
+        }
+        return aluno.getInscricoes();
+    }
+
+    public boolean anularInscricao(String idCurso, String nomeAluno) {
+        // 1. Encontrar o Aluno Real no sistema
+        Aluno aluno = registoAlunos.getAluno(nomeAluno);
+        if (aluno == null) {
+            System.out.println("Erro: Aluno não encontrado no sistema.");
+            return false;
+        }
+
+        // 2. Encontrar o Curso Real no sistema (usando o RegistoCursos)
+        Curso curso = registoCursos.getCurso(idCurso);
         if (curso == null) {
-            System.out.println("Curso não encontrado.");
+            System.out.println("Erro: Curso não encontrado.");
             return false;
         }
 
-        Inscricao inscricao = findInscricaoByIdCurso(aluno, idCurso);
-        if (inscricao == null) {
-            System.out.println("Inscrição não encontrada.");
-            return false;
-        }
-
-        curso.removerInscricao(inscricao);
-        aluno.removerInscricao(inscricao);
-
-        System.out.println("Inscrição anulada com sucesso.");
-        return true;
-    }
-
-    private Inscricao findInscricaoByIdCurso(Aluno aluno, String idCurso) {
-        for (Inscricao inscricao : aluno.getInscricoes()) {
-            if (inscricao.getCurso().getSigla().equals(idCurso)) {
-                return inscricao;
+        // 3. Procurar a Inscrição correspondente nos dados do Aluno
+        Inscricao inscricaoAlvo = null;
+        for (Inscricao i : aluno.getInscricoes()) {
+            // Verifica se a inscrição é para este curso e se está ativa
+            if (i.getCurso().equals(curso) && "ativa".equalsIgnoreCase(i.getEstado())) {
+                inscricaoAlvo = i;
+                break;
             }
         }
-        return null;
-    }
 
-    public List<Curso> listInscricoesDoAluno(Aluno aluno) {
-        return aluno.getInscricoes().stream()
-                .map(Inscricao::getCurso)
-                .distinct()
-                .collect(Collectors.toList());
+        if (inscricaoAlvo == null) {
+            System.out.println("Erro: Não existe inscrição ativa deste aluno neste curso.");
+            return false;
+        }
+
+        // 4. Validar Prazo (Opcional - lógica de negócio do Curso)
+        // if (!curso.verificaPrazoAnulacao()) return false;
+
+        // 5. Efetuar a anulação (Alterar estado)
+        inscricaoAlvo.setEstado("cancelada");
+
+        // 6. Libertar vaga (Opcional, se tiveres gestão de vagas)
+        // curso.incrementarVaga();
+
+        return true;
     }
 }

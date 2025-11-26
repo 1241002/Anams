@@ -1,87 +1,66 @@
 package org.Model;
-
 import org.Utils.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Curso {
+public class Curso implements Avaliavel {
     private String titulo;
     private String sigla;
     private String descricao;
-
-    // === UC4: CAMPOS OBRIGATÓRIOS ===
+    private String estado; // IT2: "A iniciar", "Ativo", etc.
     private TipoCurso tipo;
     private Data dataInicio;
     private Data dataFim;
-    private final List<Modulo> modulos;  // <-- FALTAVA!
-
-    // === Outros ===
-    private List<Inscricao> inscricoes;
-    private List<Turma> turmas;
+    private List<Modulo> modulos;
+    private List<Inscricao> inscricoes; // Necessário para UC11/12
 
     public Curso() {
+        this.estado = "A iniciar";
+        this.modulos = new ArrayList<>();
         this.inscricoes = new ArrayList<>();
-        this.modulos = new ArrayList<>();     // <-- AGORA EXISTE
-        this.turmas = new ArrayList<>();
     }
 
-    // === Getters & Setters (UC4) ===
-    public TipoCurso getTipo() { return tipo; }
-    public void setTipo(TipoCurso tipo) { this.tipo = tipo; }
+    // Getters/Setters básicos
+    public void setTitulo(String t) { this.titulo = t; }
+    public String getTitulo() { return titulo; }
+    public void setSigla(String s) { this.sigla = s; }
+    public String getSigla() { return sigla; }
+    public void setDescricao(String d) { this.descricao = d; }
+    public void setTipo(TipoCurso t) { this.tipo = t; }
+    public void setDataInicio(Data d) { this.dataInicio = d; }
+    public void setDataFim(Data d) { this.dataFim = d; }
 
-    public Data getDataInicio() { return dataInicio; }
-    public void setDataInicio(Data dataInicio) { this.dataInicio = dataInicio; }
+    // === IT2 NOVOS ===
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public Data getDataFim() { return dataFim; }
-    public void setDataFim(Data dataFim) { this.dataFim = dataFim; }
-
+    public boolean adicionarModulo(Modulo m) {
+        if (m.valida()) { return modulos.add(m); }
+        return false;
+    }
     public List<Modulo> getModulos() { return new ArrayList<>(modulos); }
 
-    public boolean adicionarModulo(Modulo modulo) {
-        if (modulo != null && modulo.valida()) {
-            return modulos.add(modulo);
+    // Métodos de Inscrição (para UC11/12)
+    public List<Inscricao> getInscricoes() { return inscricoes; }
+    public void adicionarInscricao(Inscricao i) { inscricoes.add(i); }
+
+    // Validação de Formador (UC11)
+    public boolean temFormador(String nomeFormador) {
+        for(Modulo m : modulos) {
+            if(m.getFormador() != null && m.getFormador().getNome().equalsIgnoreCase(nomeFormador))
+                return true;
         }
         return false;
     }
 
-    // === Outros ===
-    public void adicionarInscricao(Inscricao inscricao) {
-        this.inscricoes.add(inscricao);
+    @Override
+    public double calcularNota(List<Classificacao> classificacoesAluno) {
+        // Lógica de cálculo (não crítica para UC4/13, mas necessária para compilar Interface)
+        return 0.0;
     }
 
-    public void adicionarTurma(Turma turma) {
-        this.turmas.add(turma);
-    }
-
-    public List<Turma> getTurmas() { return turmas; }
-    public List<Inscricao> getInscricoes() { return inscricoes; }
-
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
-
-    public String getSigla() { return sigla; }
-    public void setSigla(String sigla) { this.sigla = sigla; }
-
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
-
-    public void removerInscricao(Inscricao inscricao) {
-        this.inscricoes.remove(inscricao);
-    }
-
-    // === toString CORRIGIDO ===
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Curso: ").append(titulo).append(" (").append(sigla).append(")\n");
-        sb.append("Tipo: ").append(tipo != null ? tipo.getDesignacao() : "n/a").append("\n");
-        sb.append("Descrição: ").append(descricao).append("\n");
-        sb.append("Período: ").append(dataInicio).append(" a ").append(dataFim).append("\n");
-        sb.append("Módulos (").append(modulos.size()).append("):\n");
-        for (Modulo m : modulos) {
-            sb.append("  - ").append(m).append("\n");
-        }
-        sb.append("Inscrições: ").append(inscricoes.size()).append(" aluno(s)\n");
-        return sb.toString();
+        return String.format("%s (%s) - [%s]", titulo, sigla, estado);
     }
-}
+}   

@@ -15,29 +15,28 @@ public class RegistarCursoUI {
     }
 
     public void run() {
-        System.out.println("\n=== Registar Novo Curso ===");
+        System.out.println("\n=== Registar Novo Curso (IT2) ===");
 
         controller.novoCurso();
         introduzDadosCurso();
 
         System.out.println("\n--- Dados do Curso ---");
-        System.out.println(dadosCursoAsString());
+        System.out.println(controller.getCursoAsString());
 
         // Loop para adicionar módulos
         do {
-            if (!Utils.confirma("Pretende adicionar módulos? (S/N)")) {
+            if (!Utils.confirma("Pretende adicionar um módulo? (S/N)")) {
                 break;
             }
             adicionarModulo();
         } while (true);
 
-        if (Utils.confirma("\nConfirma o registo do curso? (S/N)")) {
+        if (Utils.confirma("\nConfirma o registo final do curso? (S/N)")) {
             if (controller.registaCurso()) {
                 System.out.println("\nCurso registado com sucesso!");
-                System.out.println("\n--- Curso Final ---");
                 System.out.println(controller.getCursoAsString());
             } else {
-                System.out.println("\nErro: o curso precisa de pelo menos 1 módulo.");
+                System.out.println("\nErro: O curso precisa de pelo menos 1 módulo válido.");
             }
         } else {
             System.out.println("Registo cancelado.");
@@ -55,41 +54,60 @@ public class RegistarCursoUI {
         controller.setDadosCurso(titulo, sigla, tipo, descricao, dataInicio, dataFim);
     }
 
+    private void adicionarModulo() {
+        System.out.println("\n>> Adicionar Módulo");
+        controller.iniciarNovoModulo();
+
+        // 1. Dados Básicos do Módulo
+        String titulo = Utils.readLineFromConsole("Título do módulo: ");
+        int carga = Utils.IntFromConsole("Carga horária (horas): ");
+        // Requisito IT2: Ponderação
+        int ponderacao = Utils.IntFromConsole("Ponderação na nota final (0-100%): ");
+
+        Formador formador = selecionaFormador();
+
+        // Atualizado para aceitar os 4 argumentos corretos
+        controller.setDadosModulo(titulo, carga, (double)ponderacao, formador);
+
+        // 2. Adicionar Sessões (Requisito IT2: Mínimo 3)
+        System.out.println(">> Definir Sessões (Mínimo 3 obrigatórias)");
+        int contadorSessoes = 0;
+        do {
+            System.out.println("Sessão #" + (contadorSessoes + 1));
+            adicionarSessao();
+            contadorSessoes++;
+
+            if (contadorSessoes >= 3) {
+                if (!Utils.confirma("Adicionar mais sessões? (S/N)")) break;
+            }
+        } while (true);
+
+        // 3. Guardar Módulo
+        if (controller.adicionarModuloAtual()) {
+            System.out.println("Módulo adicionado com sucesso.");
+        } else {
+            System.out.println("Erro: Módulo inválido (verifique se tem 3 sessões).");
+        }
+    }
+
+    private void adicionarSessao() {
+        Data data = Utils.readDataFromConsole("Data da sessão: ");
+        int duracao = Utils.IntFromConsole("Duração (horas): ");
+        String sala = Utils.readLineFromConsole("Sala: ");
+
+        controller.adicionarSessao(data, duracao, sala);
+    }
+
     private TipoCurso selecionaTipoCurso() {
         List<TipoCurso> tipos = controller.getTiposCurso();
         if (tipos.isEmpty()) {
             System.out.println("Nenhum tipo de curso disponível.");
             return null;
         }
-
-        // Usa Utils.apresentaLista() → já formata com números e "0 - Cancelar"
         Utils.apresentaLista(tipos, "\nTipos de Curso Disponíveis:");
-
         int opcao = Utils.IntFromConsole("Escolha o tipo (número): ");
-        if (opcao < 1 || opcao > tipos.size()) {
-            System.out.println("Opção inválida. Usando o primeiro disponível.");
-            return tipos.get(0);
-        }
+        if (opcao < 1 || opcao > tipos.size()) return tipos.get(0);
         return tipos.get(opcao - 1);
-    }
-
-    private void adicionarModulo() {
-        controller.iniciarNovoModulo();
-
-        String titulo = Utils.readLineFromConsole("Título do módulo: ");
-        int carga = Utils.IntFromConsole("Carga horária (horas): ");
-        Data dataInicio = Utils.readDataFromConsole("Data de início do módulo (dd-MM-aaaa): ");
-        Data dataFim = Utils.readDataFromConsole("Data de término do módulo (dd-MM-aaaa): ");
-        String sala = Utils.readLineFromConsole("Sala: ");
-        Formador formador = selecionaFormador();
-
-        controller.setDadosModulo(titulo, carga, dataInicio, dataFim, sala, formador);
-
-        if (controller.adicionarModuloAtual()) {
-            System.out.println("Módulo adicionado com sucesso.");
-        } else {
-            System.out.println("Erro: dados do módulo inválidos.");
-        }
     }
 
     private Formador selecionaFormador() {
@@ -98,31 +116,9 @@ public class RegistarCursoUI {
             System.out.println("Nenhum formador disponível.");
             return null;
         }
-
         Utils.apresentaLista(formadores, "\nFormadores Disponíveis:");
-
         int opcao = Utils.IntFromConsole("Escolha o formador (número): ");
-        if (opcao < 1 || opcao > formadores.size()) {
-            System.out.println("Opção inválida. Usando o primeiro disponível.");
-            return formadores.get(0);
-        }
+        if (opcao < 1 || opcao > formadores.size()) return formadores.get(0);
         return formadores.get(opcao - 1);
-    }
-
-    private String dadosCursoAsString() {
-        Curso c = controller.getCursoEmConstrucao();
-        return String.format(
-                "Título: %s\n" +
-                        "Sigla: %s\n" +
-                        "Tipo: %s\n" +
-                        "Descrição: %s\n" +
-                        "Período: %s a %s\n",
-                c.getTitulo(),
-                c.getSigla(),
-                c.getTipo() != null ? c.getTipo().getDesignacao() : "n/a",
-                c.getDescricao(),
-                c.getDataInicio(),
-                c.getDataFim()
-        );
     }
 }
