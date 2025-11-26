@@ -3,34 +3,44 @@ package org.Controller;
 import org.Model.Formador;
 import org.Model.Curso;
 import org.Model.Empresa;
-import org.Model.Inscricao;
+import org.Model.RegistoCursos;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ConsultarCursosFormador_Controller {
-    private Empresa empresa;
+    private final RegistoCursos registoCursos;
 
-    // Construtor: recebe a empresa para aceder aos cursos
     public ConsultarCursosFormador_Controller(Empresa empresa) {
-        this.empresa = empresa;
+        // 1. Obtém o acesso ao Registo através da Empresa
+        this.registoCursos = empresa.getRegistoCursos();
     }
 
-    // Devolve os cursos onde o formador está associado
     public List<Curso> obterCursosDoFormador(Formador formador) {
         List<Curso> cursosDoFormador = new ArrayList<>();
 
-        for (Curso curso : empresa.getCursos()) {
-            for (Inscricao inscricao : curso.getInscricoes()) {
-                if (inscricao.getFormador().equals(formador)) {
-                    if (!cursosDoFormador.contains(curso)) {
-                        cursosDoFormador.add(curso);
-                    }
-                    break; // já encontrou, não precisa ver mais inscrições
-                }
+        // 2. Pede a lista completa ao Registo
+        List<Curso> todosCursos = registoCursos.getCursos();
+
+        // 3. Filtra usando a lógica correta (Information Expert no Curso)
+        for (Curso c : todosCursos) {
+            // O método temFormador foi adicionado à classe Curso na atualização anterior
+            if (c.temFormador(formador.getNome())) {
+                cursosDoFormador.add(c);
             }
         }
+
         return cursosDoFormador;
+    }
+
+    // Se precisares de obter por ID (caso a UI envie apenas o ID/Nome)
+    public List<Curso> getCursosLeciona(String nomeFormador) {
+        List<Curso> resultado = new ArrayList<>();
+        for (Curso c : registoCursos.getCursos()) {
+            if (c.temFormador(nomeFormador)) {
+                resultado.add(c);
+            }
+        }
+        return resultado;
     }
 }

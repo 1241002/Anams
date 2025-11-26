@@ -1,62 +1,66 @@
 package org.Model;
-
+import org.Utils.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Curso {
-
+public class Curso implements Avaliavel {
     private String titulo;
     private String sigla;
     private String descricao;
+    private String estado; // IT2: "A iniciar", "Ativo", etc.
     private TipoCurso tipo;
-    private int estado;                     // 0-A iniciar, 1-Ativo, ...
-    private org.Utils.Data dataInicio;      // CORRIGIDO: Data
-    private org.Utils.Data dataConclusao;   // CORRIGIDO: Data
-    private final List<Modulo> modulos;
-    private final List<Inscricao> inscricoes;
+    private Data dataInicio;
+    private Data dataFim;
+    private List<Modulo> modulos;
+    private List<Inscricao> inscricoes; // Necessário para UC11/12
 
     public Curso() {
+        this.estado = "A iniciar";
         this.modulos = new ArrayList<>();
         this.inscricoes = new ArrayList<>();
-        this.estado = 0;        // padrão: A iniciar
     }
 
-    /* ---------- getters & setters ---------- */
+    // Getters/Setters básicos
+    public void setTitulo(String t) { this.titulo = t; }
     public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
-
+    public void setSigla(String s) { this.sigla = s; }
     public String getSigla() { return sigla; }
-    public void setSigla(String sigla) { this.sigla = sigla; }
+    public void setDescricao(String d) { this.descricao = d; }
+    public void setTipo(TipoCurso t) { this.tipo = t; }
+    public void setDataInicio(Data d) { this.dataInicio = d; }
+    public void setDataFim(Data d) { this.dataFim = d; }
 
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
+    // === IT2 NOVOS ===
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public TipoCurso getTipo() { return tipo; }
-    public void setTipo(TipoCurso tipo) { this.tipo = tipo; }
-
-    public int getEstado() { return estado; }
-    public void setEstado(int estado) { this.estado = estado; }
-
-    public org.Utils.Data getDataInicio() { return dataInicio; }
-    public void setDataInicio(org.Utils.Data dataInicio) { this.dataInicio = dataInicio; }
-
-    public org.Utils.Data getDataConclusao() { return dataConclusao; }
-    public void setDataConclusao(org.Utils.Data dataConclusao) { this.dataConclusao = dataConclusao; }
-
+    public boolean adicionarModulo(Modulo m) {
+        if (m.valida()) { return modulos.add(m); }
+        return false;
+    }
     public List<Modulo> getModulos() { return new ArrayList<>(modulos); }
 
-    public boolean adicionarModulo(Modulo modulo) {
-        if (modulo != null) { modulos.add(modulo); return true; }
+    // Métodos de Inscrição (para UC11/12)
+    public List<Inscricao> getInscricoes() { return inscricoes; }
+    public void adicionarInscricao(Inscricao i) { inscricoes.add(i); }
+
+    // Validação de Formador (UC11)
+    public boolean temFormador(String nomeFormador) {
+        for(Modulo m : modulos) {
+            if(m.getFormador() != null && m.getFormador().getNome().equalsIgnoreCase(nomeFormador))
+                return true;
+        }
         return false;
     }
 
-    public List<Inscricao> getInscricoes() { return inscricoes; }
-
-    public void adicionarInscricao(Inscricao inscricao) { inscricoes.add(inscricao); }
-    public void removerInscricao(Inscricao inscricao) { inscricoes.remove(inscricao); }
+    @Override
+    public double calcularNota(List<Classificacao> classificacoesAluno) {
+        // Lógica de cálculo (não crítica para UC4/13, mas necessária para compilar Interface)
+        return 0.0;
+    }
 
     @Override
     public String toString() {
-        return titulo + " (" + sigla + ") - Estado: " + estado;
+        return String.format("%s (%s) - [%s]", titulo, sigla, estado);
     }
-}
+}   

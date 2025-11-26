@@ -1,42 +1,50 @@
 package org.Model;
+import org.Utils.Data;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Modulo {
-
-    private String codigo;
+public class Modulo implements Avaliavel {
     private String titulo;
     private int cargaHoraria;
-    private org.Utils.Data dataInicio;
-    private org.Utils.Data dataConclusao;
-    private String horario;
-    private Formador formadorResponsavel;
+    private double ponderacao; // IT2
+    private Formador formador;
+    private List<Sessao> sessoes; // IT2
 
-    public Modulo() {}
+    public Modulo() {
+        this.sessoes = new ArrayList<>();
+    }
 
-    public String getCodigo() { return codigo; }
-    public void setCodigo(String codigo) { this.codigo = codigo; }
-
-    public String getTitulo() { return titulo; }
+    // Setters básicos (mantém os teus ou usa estes)
     public void setTitulo(String titulo) { this.titulo = titulo; }
-
-    public int getCargaHoraria() { return cargaHoraria; }
+    public String getTitulo() { return titulo; }
     public void setCargaHoraria(int cargaHoraria) { this.cargaHoraria = cargaHoraria; }
+    public void setFormador(Formador formador) { this.formador = formador; }
+    public Formador getFormador() { return formador; }
 
-    public org.Utils.Data getDataInicio() { return dataInicio; }
-    public void setDataInicio(org.Utils.Data dataInicio) { this.dataInicio = dataInicio; }
+    // === IT2 NOVOS ===
+    public void setPonderacao(double ponderacao) { this.ponderacao = ponderacao; }
+    public double getPonderacao() { return ponderacao; }
 
-    public org.Utils.Data getDataConclusao() { return dataConclusao; }
-    public void setDataConclusao(org.Utils.Data dataConclusao) { this.dataConclusao = dataConclusao; }
+    public void addSessao(Sessao s) { this.sessoes.add(s); }
+    public List<Sessao> getSessoes() { return new ArrayList<>(sessoes); }
 
-    public String getHorario() { return horario; }
-    public void setHorario(String horario) { this.horario = horario; }
+    public boolean valida() {
+        // Requisito: Mínimo 3 sessões
+        if (sessoes.size() < 3) return false;
+        return titulo != null && !titulo.isEmpty();
+    }
 
-    public Formador getFormadorResponsavel() { return formadorResponsavel; }
-    public void setFormadorResponsavel(Formador formador) { this.formadorResponsavel = formador; }
+    @Override
+    public double calcularNota(List<Classificacao> classificacoes) {
+        if(classificacoes == null) return 0;
+        for(Classificacao c : classificacoes) {
+            if(c.getModulo().equals(this)) return c.getNota();
+        }
+        return 0;
+    }
 
     @Override
     public String toString() {
-        return "Módulo: " + codigo + " | " + titulo + " | CH: " + cargaHoraria +
-                " | Início: " + dataInicio + " | Fim: " + dataConclusao +
-                " | Horário: " + horario + " | Formador: " + formadorResponsavel.getNome();
+        return String.format(" - %s (%.1f%%) [%d sessões]", titulo, ponderacao, sessoes.size());
     }
 }
