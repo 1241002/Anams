@@ -112,14 +112,34 @@ public class Empresa {
     }
 
     // UC8: Registar Decisão (Aceitar/Rejeitar)
+    // UC8: Registar Decisão (Aceitar/Rejeitar) e Criar Aluno se Aceite
     public void registarDecisao(Candidato candidato, int estadoDecisao, String justificacao) {
+        // 1. Atualizar o estado do candidato
         candidato.setEstado(estadoDecisao);
-        candidato.setJustificacao(justificacao); // Método setJustificacao tem de existir em Candidato
+        candidato.setJustificacao(justificacao);
 
-        // Envia notificação da decisão
-        String msg = (estadoDecisao == EstadoMatricula.ACEITE) ? "Candidatura ACEITE!" : "Candidatura REJEITADA. Motivo: " + justificacao;
+        // 2. Lógica Crítica: Se for ACEITE, criar o Aluno
+        if (estadoDecisao == EstadoMatricula.ACEITE) {
+            // Criar novo aluno
+            Aluno novoAluno = registoAlunos.novoAluno();
+
+            // Copiar dados do Candidato para o Aluno
+            novoAluno.setNome(candidato.getNome());
+            novoAluno.setEmail(candidato.getEmail());
+            novoAluno.setCc(candidato.getCc());
+
+            // Adicionar ao Registo de Alunos (Faltava isto!)
+            registoAlunos.addAluno(novoAluno);
+
+            System.out.println("[Sistema] Novo aluno criado e registado: " + novoAluno.getNome());
+        }
+
+        // 3. Enviar notificação
+        String msg = (estadoDecisao == EstadoMatricula.ACEITE)
+                ? "Parabéns! A sua candidatura foi ACEITE. Já é aluno."
+                : "Candidatura REJEITADA. Motivo: " + justificacao;
+
         serviceEmail.sendEmail(candidato.getEmail(), msg);
-
     }
 
     // ============================================================

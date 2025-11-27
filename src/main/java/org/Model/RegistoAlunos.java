@@ -18,19 +18,15 @@ public class RegistoAlunos {
         this.alunos.add(a);
     }
 
+    // Este é o ÚNICO método getAluno que deves ter
     public Aluno getAluno(String nome) {
         for (Aluno a : alunos) {
             if (a.getNome() != null && a.getNome().equalsIgnoreCase(nome)) {
                 return a;
             }
         }
-        // Para efeitos de teste, se não encontrar, cria um (Simulação)
-        // Num sistema real, retornaria null.
-        Aluno novo = new Aluno();
-        novo.setNome(nome);
-        novo.setEmail(nome + "@email.com");
-        this.alunos.add(novo);
-        return novo;
+        // Retorna null se não encontrar (Correção para o UC10 funcionar bem)
+        return null;
     }
 
     public List<Aluno> getAlunos() {
