@@ -2,52 +2,49 @@ package org.Controller;
 
 import org.Model.Aluno;
 import org.Model.Curso;
-import org.Model.Inscricao;
 import org.Model.Empresa;
+import org.Model.Inscricao;
+import org.Model.RegistoAlunos;
+import org.Model.RegistoCursos;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AnularInscricao_Controller {
-    private Empresa empresa;
+    private final RegistoAlunos registoAlunos;
+    private final RegistoCursos registoCursos;
 
     public AnularInscricao_Controller(Empresa empresa) {
-        this.empresa = empresa;
+        this.registoAlunos = empresa.getRegistoAlunos();
+        this.registoCursos = empresa.getRegistoCursos();
     }
 
-    public boolean anularInscricao(String idCurso, Aluno aluno) {
-        Curso curso = empresa.findCursoById(idCurso);
-        if (curso == null) {
-            System.out.println("Curso não encontrado.");
-            return false;
-        }
+    // Passo 1 da UI: Obter inscrições para listar
+    public List<Inscricao> listInscricoesDoAluno(String nomeAluno) {
+        Aluno aluno = registoAlunos.getAluno(nomeAluno);
+        if (aluno == null) return new ArrayList<>();
 
-        Inscricao inscricao = findInscricaoByIdCurso(aluno, idCurso);
-        if (inscricao == null) {
-            System.out.println("Inscrição não encontrada.");
-            return false;
-        }
-
-        curso.removerInscricao(inscricao);
-        aluno.removerInscricao(inscricao);
-
-        System.out.println("Inscrição anulada com sucesso.");
-        return true;
-    }
-
-    private Inscricao findInscricaoByIdCurso(Aluno aluno, String idCurso) {
-        for (Inscricao inscricao : aluno.getInscricoes()) {
-            if (inscricao.getCurso().getSigla().equals(idCurso)) {
-                return inscricao;
+        List<Inscricao> ativas = new ArrayList<>();
+        for (Inscricao i : aluno.getInscricoes()) {
+            // Filtra apenas as ativas para mostrar na UI
+            if ("0-ativa".equalsIgnoreCase(i.getEstado())) {
+                ativas.add(i);
             }
         }
-        return null;
+        return ativas;
     }
 
-    public List<Curso> listInscricoesDoAluno(Aluno aluno) {
-        return aluno.getInscricoes().stream()
-                .map(Inscricao::getCurso)
-                .distinct()
-                .collect(Collectors.toList());
+    // Passo 2 da UI: Executar anulação
+    public boolean anularInscricao(String idCurso, String nomeAluno) {
+        // Recuperar objetos do domínio
+        Aluno aluno = registoAlunos.getAluno(nomeAluno);
+        Curso curso = registoCursos.getCurso(idCurso);
+
+        if (aluno == null || curso == null) {
+            return false;
+        }
+
+        // Delegar a regra de negócio no RegistoCursos
+        return registoCursos.anularInscricao(curso, aluno);
     }
 }

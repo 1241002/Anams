@@ -1,34 +1,42 @@
 package org.Model;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Inscricao {
     private Aluno aluno;
-    private Formador formador;
     private Curso curso;
-    private boolean aprovada;
+    private String estado; // "0-ativa", "1-cancelada"
+    private LocalDate dataRealizacao;
+    private List<Classificacao> classificacoes;
 
     public Inscricao(Aluno aluno, Curso curso) {
         this.aluno = aluno;
-        this.formador = formador;
         this.curso = curso;
-        this.aprovada = false;
+        this.estado = "0-ativa";
+        this.dataRealizacao = LocalDate.now();
+        this.classificacoes = new ArrayList<>();
     }
 
-    public Aluno getAluno() {
-        return aluno;
+    public void setEstado(String estado) { this.estado = estado; }
+    public String getEstado() { return estado; }
+
+    public Aluno getAluno() { return aluno; }
+    public Curso getCurso() { return curso; }
+
+    public void addClassificacao(Classificacao c) {
+        if (this.classificacoes == null) {
+            this.classificacoes = new ArrayList<>();
+        }
+        this.classificacoes.add(c);
     }
-    public Formador getFormador() {
-        return formador;
+    public List<Classificacao> getClassificacoes() {
+        return classificacoes;
     }
 
-    public Curso getCurso() {
-        return curso;
-    }
-
-    public boolean isAprovada() {
-        return aprovada;
-    }
-
-    public void setAprovada(boolean aprovada) {
-        this.aprovada = aprovada;
+    @Override
+    public String toString() {
+        return "Inscricao de " + aluno.getNome() + " em " + curso.getSigla();
     }
 }

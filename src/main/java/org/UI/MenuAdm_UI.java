@@ -15,34 +15,38 @@ import org.Model.Empresa;
  */
 public class MenuAdm_UI
 {
-    private Empresa empresa;
-    private String opcao;
+    private final Empresa empresa;   // Referência à camada de modelo (empresa)
+    private String opcao;           // Opção escolhida pelo utilizador
 
+    // Construtor: recebe a instância da empresa para partilhar dados
     public MenuAdm_UI(Empresa empresa)
     {
         this.empresa = empresa;
     }
+
+    // Executa o menu administrativo em loop até o utilizador escolher "Voltar"
     public void run() throws IOException
     {
         do
         {
+            // Cabeçalho do menu
             System.out.println("###### MENU #####\n\n");
             System.out.println("1. Registar Coordenador Académico");
 
             System.out.println("0. Voltar");
 
+            // Lê a opção do utilizador
             opcao = Utils.readLineFromConsole("Escolha uma opção: ");
- 
+
+            // Processa a opção 1 – Registar Coordenador Académico
             if( opcao.equals("1") )
             {
                 System.out.println("Selecionou a opção: Registar Coordenador Académico");
                 RegistarCA_UI ui = new RegistarCA_UI(empresa);
-                ui.run();
+                ui.run();   // Inicia a UI de registo do CA
             }
 
         }
-        while (!opcao.equals("0") );
+        while (!opcao.equals("0") );   // Sai do loop apenas ao escolher "0"
     }
 }
-
-
