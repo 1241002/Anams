@@ -1,40 +1,58 @@
 package org.Controller;
 
-import org.Model.Aluno;
 import org.Model.Curso;
 import org.Model.Empresa;
+import org.Model.Formador;
 import org.Model.Inscricao;
+import org.Model.RegistoCursos;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ConsultarAlunosCurso_Controller {
-    private Empresa empresa;
 
-    // Construtor: recebe a empresa para aceder aos cursos
+    private final Empresa empresa;
+    private final RegistoCursos registoCursos;
+
     public ConsultarAlunosCurso_Controller(Empresa empresa) {
         this.empresa = empresa;
+        // Acesso ao RegistoCursos através da Empresa (Facade)
+        this.registoCursos = empresa.getRegistoCursos();
     }
 
-    // Devolve todos os cursos registados na empresa
-    public List<Curso> listAvailableCourses() {
-        return empresa.getCursos();
+    // Passo 1: Obter lista de cursos atribuídos ao formador (Reutiliza lógica do UC11)
+    public List<Curso> getCursosDoFormador(String nomeFormador) {
+        // 1. Obter objeto formador
+        Formador formador = empresa.getFormadorPorNome(nomeFormador);
+        if (formador == null) return new ArrayList<>();
+
+        // 2. Delegar pesquisa ao RegistoCursos
+        return registoCursos.getCursosDoFormador(formador);
     }
 
-    public List<Aluno> obterAlunosDoCurso(Curso curso) {
-        List<Aluno> alunos = new ArrayList<>();
+    // Passo 2: Obter dados dos alunos inscritos no curso selecionado
+    public List<String> getAlunosDoCurso(String siglaCurso) {
+        List<String> infoAlunos = new ArrayList<>();
 
-        // Percorre todas as inscrições do curso
-        for (Inscricao inscricao : curso.getInscricoes()) {
-            Aluno aluno = inscricao.getAluno();
+        // 1. Obter o Curso pelo ID
+        Curso curso = registoCursos.getCurso(siglaCurso);
 
-            // Evita duplicados
-            if (!alunos.contains(aluno)) {
-                alunos.add(aluno);
+        if (curso != null) {
+            // 2. Iterar sobre as inscrições do curso (Information Expert)
+            for (Inscricao insc : curso.getInscricoes()) {
+                // Formatar string: "Nome do Aluno [Estado da Inscrição]"
+                String info = String.format("%s [%s]",
+                        insc.getAluno().getNome(),
+                        insc.getEstado());
+
+                infoAlunos.add(info);
             }
         }
+        return infoAlunos;
+    }
 
-        return alunos;
+    // Auxiliar para UI (Simulação de Login)
+    public List<Formador> getListaFormadores() {
+        return empresa.obterListaFormadores();
     }
 }

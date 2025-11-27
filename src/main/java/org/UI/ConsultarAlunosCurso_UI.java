@@ -1,46 +1,71 @@
 package org.UI;
 
 import org.Controller.ConsultarAlunosCurso_Controller;
-import org.Model.Aluno;
 import org.Model.Curso;
 import org.Model.Empresa;
+import org.Model.Formador;
 import org.Utils.Utils;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 public class ConsultarAlunosCurso_UI {
-    private ConsultarAlunosCurso_Controller controller;
-    private Scanner scanner = new Scanner(System.in);
+    private final ConsultarAlunosCurso_Controller controller;
 
     public ConsultarAlunosCurso_UI(Empresa empresa) {
         this.controller = new ConsultarAlunosCurso_Controller(empresa);
     }
 
     public void run() throws IOException {
-        System.out.println("Consultar Alunos de um Curso");
-        List<Curso> cursos = controller.listAvailableCourses();
-        for (int i = 0; i < cursos.size(); i++) System.out.println((i+1) + ". " + cursos.get(i).getTitulo());
-        int i = Integer.parseInt(Utils.readLineFromConsole("Curso nº: ")) - 1;
-        List<Aluno> alunos = controller.obterAlunosDoCurso(cursos.get(i));
-        for (int j = 0; j < alunos.size(); j++) System.out.println((j+1) + ". " + alunos.get(j).getNome());
-    }
+        System.out.println("\n=== Consultar Alunos de um Curso ===");
 
-    private void listAvailableCourses() {
-        List<Curso> cursos = controller.listAvailableCourses();
-        System.out.println("Cursos disponíveis:");
-        for (int i = 0; i < cursos.size(); i++) {
-            Curso curso = cursos.get(i);
-            System.out.println((i + 1) + ". " + curso.getTitulo());
+        // 1. Simulação de Login (Escolher Formador)
+        Formador formador = selecionaFormador();
+        if (formador == null) return;
+
+        System.out.println("Formador autenticado: " + formador.getNome());
+
+        // 2. Listar cursos deste formador
+        List<Curso> cursos = controller.getCursosDoFormador(formador.getNome());
+
+        if (cursos.isEmpty()) {
+            System.out.println("Não tem cursos atribuídos.");
+            return;
+        }
+
+        System.out.println("\nSelecione o curso:");
+        int i = 0;
+        for (Curso c : cursos) {
+            System.out.println(++i + ". " + c.getTitulo() + " [" + c.getSigla() + "]");
+        }
+
+        // 3. Selecionar Curso
+        int opcao = Utils.IntFromConsole("Opção: ") - 1;
+        if (opcao < 0 || opcao >= cursos.size()) {
+            System.out.println("Opção inválida.");
+            return;
+        }
+        Curso cursoSelecionado = cursos.get(opcao);
+
+        // 4. Mostrar Alunos
+        List<String> alunosInfo = controller.getAlunosDoCurso(cursoSelecionado.getSigla());
+
+        if (alunosInfo.isEmpty()) {
+            System.out.println("\nEste curso ainda não tem alunos inscritos.");
+        } else {
+            System.out.println("\n--- Lista de Alunos em " + cursoSelecionado.getSigla() + " ---");
+            for (String info : alunosInfo) {
+                System.out.println("- " + info);
+            }
         }
     }
 
-    private Curso findCourseById(String idCurso) {
-        for (Curso curso : controller.listAvailableCourses()) {
-            if (curso.getSigla().equals(idCurso)) {
-                return curso;
-            }
+    private Formador selecionaFormador() {
+        List<Formador> lista = controller.getListaFormadores();
+        if (lista.isEmpty()) {
+            System.out.println("Não existem formadores no sistema.");
+            return null;
+
         }
         return null;
     }

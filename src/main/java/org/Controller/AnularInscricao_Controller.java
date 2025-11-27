@@ -1,67 +1,50 @@
 package org.Controller;
 
-import org.Model.*;
-import java.util.List;
+import org.Model.Aluno;
+import org.Model.Curso;
+import org.Model.Empresa;
+import org.Model.Inscricao;
+import org.Model.RegistoAlunos;
+import org.Model.RegistoCursos;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class AnularInscricao_Controller {
     private final RegistoAlunos registoAlunos;
     private final RegistoCursos registoCursos;
 
     public AnularInscricao_Controller(Empresa empresa) {
-        // Obtém acesso aos registos através da Empresa
         this.registoAlunos = empresa.getRegistoAlunos();
         this.registoCursos = empresa.getRegistoCursos();
     }
 
+    // Passo 1 da UI: Obter inscrições para listar
     public List<Inscricao> listInscricoesDoAluno(String nomeAluno) {
-        // Busca o aluno real no registo pelo nome
         Aluno aluno = registoAlunos.getAluno(nomeAluno);
-        if (aluno == null) {
-            return new ArrayList<>();
-        }
-        return aluno.getInscricoes();
-    }
+        if (aluno == null) return new ArrayList<>();
 
-    public boolean anularInscricao(String idCurso, String nomeAluno) {
-        // 1. Encontrar o Aluno Real no sistema
-        Aluno aluno = registoAlunos.getAluno(nomeAluno);
-        if (aluno == null) {
-            System.out.println("Erro: Aluno não encontrado no sistema.");
-            return false;
-        }
-
-        // 2. Encontrar o Curso Real no sistema (usando o RegistoCursos)
-        Curso curso = registoCursos.getCurso(idCurso);
-        if (curso == null) {
-            System.out.println("Erro: Curso não encontrado.");
-            return false;
-        }
-
-        // 3. Procurar a Inscrição correspondente nos dados do Aluno
-        Inscricao inscricaoAlvo = null;
+        List<Inscricao> ativas = new ArrayList<>();
         for (Inscricao i : aluno.getInscricoes()) {
-            // Verifica se a inscrição é para este curso e se está ativa
-            if (i.getCurso().equals(curso) && "ativa".equalsIgnoreCase(i.getEstado())) {
-                inscricaoAlvo = i;
-                break;
+            // Filtra apenas as ativas para mostrar na UI
+            if ("0-ativa".equalsIgnoreCase(i.getEstado())) {
+                ativas.add(i);
             }
         }
+        return ativas;
+    }
 
-        if (inscricaoAlvo == null) {
-            System.out.println("Erro: Não existe inscrição ativa deste aluno neste curso.");
+    // Passo 2 da UI: Executar anulação
+    public boolean anularInscricao(String idCurso, String nomeAluno) {
+        // Recuperar objetos do domínio
+        Aluno aluno = registoAlunos.getAluno(nomeAluno);
+        Curso curso = registoCursos.getCurso(idCurso);
+
+        if (aluno == null || curso == null) {
             return false;
         }
 
-        // 4. Validar Prazo (Opcional - lógica de negócio do Curso)
-        // if (!curso.verificaPrazoAnulacao()) return false;
-
-        // 5. Efetuar a anulação (Alterar estado)
-        inscricaoAlvo.setEstado("cancelada");
-
-        // 6. Libertar vaga (Opcional, se tiveres gestão de vagas)
-        // curso.incrementarVaga();
-
-        return true;
+        // Delegar a regra de negócio no RegistoCursos
+        return registoCursos.anularInscricao(curso, aluno);
     }
 }

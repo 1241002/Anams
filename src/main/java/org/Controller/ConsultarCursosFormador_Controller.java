@@ -1,46 +1,40 @@
 package org.Controller;
 
-import org.Model.Formador;
 import org.Model.Curso;
 import org.Model.Empresa;
+import org.Model.Formador;
 import org.Model.RegistoCursos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConsultarCursosFormador_Controller {
+
+    private final Empresa empresa;
     private final RegistoCursos registoCursos;
 
     public ConsultarCursosFormador_Controller(Empresa empresa) {
-        // 1. Obtém o acesso ao Registo através da Empresa
+        this.empresa = empresa;
+        // Obtém o acesso ao Registo através da Empresa (Facade)
         this.registoCursos = empresa.getRegistoCursos();
     }
 
-    public List<Curso> obterCursosDoFormador(Formador formador) {
-        List<Curso> cursosDoFormador = new ArrayList<>();
+    // Método conforme o diagrama: getCursosLecciona
+    public List<Curso> getCursosLecciona(String nomeFormador) {
+        // 1. Obter o objeto Formador (Simulação de Sessão/Login)
+        Formador formador = empresa.getFormadorPorNome(nomeFormador);
 
-        // 2. Pede a lista completa ao Registo
-        List<Curso> todosCursos = registoCursos.getCursos();
-
-        // 3. Filtra usando a lógica correta (Information Expert no Curso)
-        for (Curso c : todosCursos) {
-            // O método temFormador foi adicionado à classe Curso na atualização anterior
-            if (c.temFormador(formador.getNome())) {
-                cursosDoFormador.add(c);
-            }
+        if (formador == null) {
+            return new ArrayList<>();
         }
 
-        return cursosDoFormador;
+        // 2. Delegar a pesquisa ao RegistoCursos (High Cohesion)
+        // O Registo vai usar o método c.temFormador(f) conforme o diagrama
+        return registoCursos.getCursosDoFormador(formador);
     }
 
-    // Se precisares de obter por ID (caso a UI envie apenas o ID/Nome)
-    public List<Curso> getCursosLeciona(String nomeFormador) {
-        List<Curso> resultado = new ArrayList<>();
-        for (Curso c : registoCursos.getCursos()) {
-            if (c.temFormador(nomeFormador)) {
-                resultado.add(c);
-            }
-        }
-        return resultado;
+    // Método auxiliar para a UI listar formadores (Simulação de Login)
+    public List<Formador> getListaFormadores() {
+        return empresa.obterListaFormadores();
     }
 }
