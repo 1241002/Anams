@@ -9,7 +9,7 @@ public class Empresa {
     private final List<TipoCurso> lstTiposCurso;
     private final List<CoordenadorAcademico> lstCA;
     private final List<Formador> lstFormadores;
-    private final List<Matricula> lstMatriculas;
+    // private final List<Matricula> lstMatriculas; // Podes remover esta se apagaste a classe Matricula
 
     // === NOVOS REGISTOS (Para a nova lógica UC9-UC15) ===
     private final RegistoCursos registoCursos;
@@ -25,7 +25,7 @@ public class Empresa {
         this.lstTiposCurso = new ArrayList<>();
         this.lstCA = new ArrayList<>();
         this.lstFormadores = new ArrayList<>();
-        this.lstMatriculas = new ArrayList<>();
+        // this.lstMatriculas = new ArrayList<>();
 
         // Inicialização dos novos registos
         this.registoCursos = new RegistoCursos();
@@ -111,15 +111,30 @@ public class Empresa {
         return pendentes;
     }
 
-    // UC8: Registar Decisão (Aceitar/Rejeitar)
+    // === UC8: CORRIGIDO - Lógica de Criação de Aluno ===
     public void registarDecisao(Candidato candidato, int estadoDecisao, String justificacao) {
+        // 1. Atualizar estado da candidatura
         candidato.setEstado(estadoDecisao);
-        candidato.setJustificacao(justificacao); // Método setJustificacao tem de existir em Candidato
+        candidato.setJustificacao(justificacao);
 
-        // Envia notificação da decisão
-        String msg = (estadoDecisao == EstadoMatricula.ACEITE) ? "Candidatura ACEITE!" : "Candidatura REJEITADA. Motivo: " + justificacao;
+        // 2. SE ACEITE -> CRIAR O ALUNO AUTOMATICAMENTE
+        if (estadoDecisao == EstadoMatricula.ACEITE) {
+            Aluno novoAluno = registoAlunos.novoAluno();
+
+            // Copiar dados do Candidato para o Aluno
+            novoAluno.setNome(candidato.getNome());
+            novoAluno.setEmail(candidato.getEmail());
+            novoAluno.setCc(candidato.getCc());
+
+            // Adicionar ao Registo de Alunos
+            registoAlunos.addAluno(novoAluno);
+
+            System.out.println(">> SISTEMA: Aluno criado e registado automaticamente: " + novoAluno.getNome());
+        }
+
+        // 3. Envia notificação da decisão
+        String msg = (estadoDecisao == EstadoMatricula.ACEITE) ? "Candidatura ACEITE! Bem-vindo." : "Candidatura REJEITADA. Motivo: " + justificacao;
         serviceEmail.sendEmail(candidato.getEmail(), msg);
-
     }
 
     // ============================================================
@@ -130,42 +145,10 @@ public class Empresa {
         return "MOD-" + (System.currentTimeMillis() % 10000);
     }
 
-    public boolean existeSobreposicaoHorario(Formador f, String horario) {
-        return false;
-    }
-
     public boolean registaModulo(Curso c, Modulo m) {
         return c.adicionarModulo(m);
     }
 
-    // Gestão de Matrículas Antigas (ValidarMatriculaController)
-    public void registaMatricula(Matricula m) {
-        lstMatriculas.add(m);
-    }
-
-    public List<Matricula> filtrarMatriculasPorEstado(int estado) {
-        List<Matricula> lista = new ArrayList<>();
-        for (Matricula m : lstMatriculas) {
-            if (m.getEstado() == estado) {
-                lista.add(m);
-            }
-        }
-        return lista;
-    }
-
-    public void atualizarMatricula(Matricula m) {
-        // Em memória
-    }
-
-    public void enviarNotificacao(Matricula m, String msg) {
-        System.out.println("Notificação enviada para " + m.getEmail() + ": " + msg);
-    }
-
-    public void notificarCA(Matricula m) {
-        System.out.println("CA notificado sobre: " + m.getNome());
-    }
-
-    // Gestão de Formadores
     public Formador novoFormador() { return new Formador(); }
 
     public boolean registaFormador(Formador f) {
@@ -185,7 +168,6 @@ public class Empresa {
         return null;
     }
 
-    // Gestão de Tipos de Curso
     public TipoCurso novoTipoCurso() { return new TipoCurso(); }
 
     public boolean especificarTipoCurso(TipoCurso tc) {
@@ -195,7 +177,6 @@ public class Empresa {
 
     public List<TipoCurso> obterListaTiposCurso() { return new ArrayList<>(lstTiposCurso); }
 
-    // Gestão de Coordenadores (CA)
     public CoordenadorAcademico novoCA() { return new CoordenadorAcademico(); }
 
     public boolean registaCA(CoordenadorAcademico ca) {

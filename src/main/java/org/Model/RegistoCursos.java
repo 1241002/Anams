@@ -117,7 +117,7 @@ public class RegistoCursos {
         Classificacao c = new Classificacao(inscricao, modulo, nota);
         inscricao.addClassificacao(c);
 
-        return true; // <--- FALTAVA ESTA LINHA (Sucesso)
+        return true; //
     }
 
     public List<String> getEstadosPossiveis() {
