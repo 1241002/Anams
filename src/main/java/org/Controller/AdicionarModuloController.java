@@ -19,9 +19,9 @@ public class AdicionarModuloController {
         this.registoCursos = empresa.getRegistoCursos();
     }
 
-    // Passo 1: Listar Cursos
+    // Passo 1: Listar Cursos (Filtrado por estado "A iniciar")
     public List<Curso> obterListaCursos() {
-        return registoCursos.getCursos();
+        return registoCursos.getCursosPorEstado("A iniciar");
     }
 
     // Passo 2: Selecionar Curso
@@ -64,8 +64,14 @@ public class AdicionarModuloController {
 
     // Passo 5: Confirmar e Gravar
     public boolean confirmarRegisto() {
+        // Verifica se temos curso e módulo instanciados
         if (cursoSelecionado != null && moduloEmConstrucao != null) {
 
+            // 1. Validar o módulo (ex: verificar se tem as 3 sessões obrigatórias)
+            if (moduloEmConstrucao.valida()) {
+                // 2. Adicionar o módulo ao curso
+                return cursoSelecionado.adicionarModulo(moduloEmConstrucao);
+            }
         }
         return false;
     }
