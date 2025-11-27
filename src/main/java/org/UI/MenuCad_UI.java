@@ -43,7 +43,7 @@ public class MenuCad_UI
             if (opcao.equals("1"))
             {
                 System.out.println("Selecionou a opção: Fazer matrícula na Instituição");
-                SubmeterMatricula_UI ui = new SubmeterMatricula_UI(empresa);
+                SubmeterCandidatura_UI ui = new SubmeterCandidatura_UI(empresa);
                 ui.run();   // Inicia a UI de submissão de matrícula
             }
 

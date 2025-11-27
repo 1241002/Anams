@@ -3,6 +3,7 @@ package org.Model;
 import org.Utils.Data;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Curso implements Avaliavel {
     private String titulo;
@@ -49,6 +50,33 @@ public class Curso implements Avaliavel {
         return false;
     }
 
+    // === MÉTODOS UC14 (Cálculo de Notas) ===
+
+    // Calcula a nota final do curso baseada na Média Ponderada dos módulos
+    @Override
+    public double calcularNota(List<Classificacao> classificacoesAluno) {
+        double somaNotasPonderadas = 0.0;
+        double somaPonderacoes = 0.0;
+
+        for (Modulo m : this.modulos) {
+            // 1. Pede ao módulo a nota que o aluno teve nele (Delegation)
+            double notaModulo = m.calcularNota(classificacoesAluno);
+
+            // 2. Obtém o peso do módulo no curso
+            double peso = m.getPonderacao();
+
+            // 3. Acumula para a média
+            somaNotasPonderadas += (notaModulo * peso);
+            somaPonderacoes += peso;
+        }
+
+        // Evita divisão por zero se o curso não tiver módulos ou ponderações
+        if (somaPonderacoes == 0) return 0.0;
+
+        // Retorna média ponderada
+        return somaNotasPonderadas / somaPonderacoes;
+    }
+
     // === GETTERS E SETTERS ===
     public void adicionarInscricao(Inscricao i) { inscricoes.add(i); }
     public List<Inscricao> getInscricoes() { return inscricoes; }
@@ -74,8 +102,14 @@ public class Curso implements Avaliavel {
     public void setEstado(String estado) { this.estado = estado; }
     public void setResponsavel(Formador f) { this.responsavel = f; }
 
+    // É boa prática ter o equals para o UC14 funcionar bem nas comparações de listas
     @Override
-    public double calcularNota(List<Classificacao> classificacoesAluno) { return 0.0; }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Curso curso = (Curso) o;
+        return Objects.equals(sigla, curso.sigla);
+    }
 
     @Override
     public String toString() {

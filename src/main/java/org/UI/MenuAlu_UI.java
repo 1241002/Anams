@@ -4,51 +4,50 @@ import java.io.IOException;
 
 import org.Utils.Utils;
 import org.Model.Empresa;
-/**
- *
- * @author Dulce Mota <mdm@isep.ipp.pt>
- */
+
 public class MenuAlu_UI
 {
-    private final Empresa empresa;   // Referência à camada de modelo (empresa)
-    private String opcao;           // Opção escolhida pelo utilizador
+    private final Empresa empresa;
+    private String opcao;
 
-    // Construtor: recebe a instância da empresa para partilhar dados
     public MenuAlu_UI(Empresa empresa)
     {
         this.empresa = empresa;
     }
 
-    // Executa o menu do aluno em loop até o utilizador escolher "Voltar"
     public void run() throws IOException
     {
         do
         {
-            // Cabeçalho do menu
-            System.out.println("###### MENU #####\n\n");
+            System.out.println("\n###### MENU ALUNO #####\n");
             System.out.println("1. Fazer inscrição num curso");
             System.out.println("2. Anular inscrição num curso");
+            System.out.println("3. Consultar Classificações"); // === NOVA OPÇÃO (UC14) ===
             System.out.println("0. Voltar");
 
-            // Lê a opção do utilizador
             opcao = Utils.readLineFromConsole("Escolha uma opção: ");
 
-            // Processa a opção 1 – Fazer inscrição num curso
+            // Opção 1 – Fazer inscrição (UC9)
             if( opcao.equals("1") )
             {
                 InscreverAluno_UI ui = new InscreverAluno_UI(empresa);
-                ui.run();   // Inicia a UI de inscrição no curso
-                System.out.println("Selecionou a opção: Fazer inscrição num curso");
+                ui.run();
             }
-            // Processa a opção 2 – Anular inscrição num curso
+            // Opção 2 – Anular inscrição (UC10)
             else if( opcao.equals("2") )
             {
                 AnularInscricao_UI ui = new AnularInscricao_UI(empresa);
-                ui.run();   // Inicia a UI de anulação de inscrição
-                System.out.println("Selecionou a opção: Anular inscrição num curso");
+                ui.run();
+            }
+            // Opção 3 – Consultar Classificações (UC14)
+            else if( opcao.equals("3") )
+            {
+                // Chama a nova UI que criámos
+                ConsultarClassificacoes_UI ui = new ConsultarClassificacoes_UI(empresa);
+                ui.run();
             }
 
         }
-        while (!opcao.equals("0") );   // Sai do loop apenas ao escolher "0"
+        while (!opcao.equals("0") );
     }
 }

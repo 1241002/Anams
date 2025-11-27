@@ -11,59 +11,64 @@ public class AdicionarModulo_UI {
 
     private final AdicionarModuloController ctrl;
 
-    // Construtor: recebe a empresa e cria o controlador
     public AdicionarModulo_UI(Empresa empresa) {
         ctrl = new AdicionarModuloController(empresa);
     }
 
-    // Executa o fluxo completo de adicionar um módulo a um curso
     public void run() throws IOException {
         System.out.println("\n### Adicionar Módulo a Curso ###");
 
-        // Mostra todos os cursos disponíveis
-        List<Curso> cursos = ctrl.obterCursos();
+        // 1. Escolher Curso
+        List<Curso> cursos = ctrl.obterListaCursos();
         if (cursos.isEmpty()) {
             System.out.println("Nenhum curso disponível.");
             return;
         }
 
-        // Lista cursos com número
         int idx = 0;
         for (Curso c : cursos) System.out.println(++idx + ". " + c);
 
-        // Lê escolha do usuário e seleciona o curso
-        int escCurso = Integer.parseInt(Utils.readLineFromConsole("Escolha o curso (nº): ")) - 1;
-        ctrl.selecionarCurso(escCurso);
+        int escCurso = Utils.IntFromConsole("Escolha o curso (nº): ") - 1;
+        if (escCurso < 0 || escCurso >= cursos.size()) return;
 
-        // Lê dados do módulo
+        // Seleciona usando a SIGLA (conforme o diagrama pede)
+        ctrl.selecionarCurso(cursos.get(escCurso).getSigla());
+
+        // 2. Dados do Módulo
         String titulo = Utils.readLineFromConsole("Título do módulo: ");
-        int ch      = Integer.parseInt(Utils.readLineFromConsole("Carga horária: "));
+        int ch = Utils.IntFromConsole("Carga horária: ");
+        // === NOVO CAMPO ===
+        double ponderacao = Double.parseDouble(Utils.readLineFromConsole("Ponderação (0-1 ou %): "));
+
         Data dataI = Utils.readDataFromConsole("Data início (dd-MM-yyyy): ");
         Data dataF = Utils.readDataFromConsole("Data fim (dd-MM-yyyy): ");
         String hora = Utils.readLineFromConsole("Horário (ex: Seg 14h-16h): ");
 
-        // Mostra formadores disponíveis
+        // 3. Escolher Formador
         List<Formador> formadores = ctrl.obterFormadores();
         int fIdx = 0;
-        for (Formador f : formadores) System.out.println(++fIdx + ". " + f);
+        for (Formador f : formadores) System.out.println(++fIdx + ". " + f.getNome());
 
-        // Lê escolha do formador
-        int escForm = Integer.parseInt(Utils.readLineFromConsole("Escolha o formador (nº): ")) - 1;
-        Formador formador = formadores.get(escForm);
+        int escForm = Utils.IntFromConsole("Escolha o formador (nº): ") - 1;
+        Formador formador = (escForm >= 0 && escForm < formadores.size()) ? formadores.get(escForm) : null;
 
-        // Cria o módulo com os dados
-        ctrl.criarModulo(titulo, ch, dataI, dataF, hora, formador);
+        // Cria o módulo em memória
+        ctrl.criarModulo(titulo, ch, dataI, dataF, hora, formador, ponderacao);
 
-        // Verifica conflito de horário
-        if (!ctrl.dadosOk()) {
-            System.out.println("Horário sobrepõe-se a outro módulo do mesmo formador.");
-            return;
-        }
+        // 4. Adicionar Sessões
+        System.out.println("\n>> Adicionar Sessões");
+        do {
+            Data dSessao = Utils.readDataFromConsole("Data da sessão: ");
+            int duracao = Utils.IntFromConsole("Duração (h): ");
+            String sala = Utils.readLineFromConsole("Sala: ");
 
-        // Mostra resumo do módulo
+            ctrl.adicionarSessao(dSessao, duracao, sala);
+
+        } while (Utils.confirma("Adicionar outra sessão? (S/N)"));
+
+        // 5. Mostrar resumo e Confirmar
         System.out.println("\nDados do módulo:\n" + ctrl.getDadosModulo());
 
-        // Confirma e regista
         if (Utils.confirma("Confirma o registo? (S/N)")) {
             if (ctrl.confirmarRegisto())
                 System.out.println("Módulo registado com sucesso!");

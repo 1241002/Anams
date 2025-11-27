@@ -11,21 +11,34 @@ public class Empresa {
     private final List<Formador> lstFormadores;
     private final List<Matricula> lstMatriculas;
 
-    // === NOVOS REGISTOS (Para a nova lógica) ===
+    // === NOVOS REGISTOS (Para a nova lógica UC9-UC15) ===
     private final RegistoCursos registoCursos;
     private final RegistoAlunos registoAlunos;
 
+    // === ESTRUTURAS PARA UC7 e UC8 (Candidaturas) ===
+    private final List<Candidato> candidatos;
+    private final ServiceEmail serviceEmail;
+
+    // === CONSTRUTOR ÚNICO (Inicializa TUDO aqui) ===
     public Empresa() {
+        // Inicialização das listas legadas
         this.lstTiposCurso = new ArrayList<>();
         this.lstCA = new ArrayList<>();
         this.lstFormadores = new ArrayList<>();
         this.lstMatriculas = new ArrayList<>();
 
+        // Inicialização dos novos registos
         this.registoCursos = new RegistoCursos();
         this.registoAlunos = new RegistoAlunos();
+
+        // Inicialização UC7/UC8
+        this.candidatos = new ArrayList<>();
+        this.serviceEmail = new ServiceEmail();
     }
 
-    // === ACESSO AOS REGISTOS (Usado pelos novos Controllers) ===
+    // ============================================================
+    // === MÉTODOS DOS NOVOS REGISTOS (UC9, 10, 11, 12, 15) ===
+    // ============================================================
     public RegistoCursos getRegistoCursos() {
         return registoCursos;
     }
@@ -34,7 +47,7 @@ public class Empresa {
         return registoAlunos;
     }
 
-    // === MÉTODOS DE ALUNOS (Ponte) ===
+    // Ponte para Alunos
     public void addAluno(Aluno a) {
         registoAlunos.addAluno(a);
     }
@@ -43,12 +56,12 @@ public class Empresa {
         return registoAlunos.getAlunos();
     }
 
-    // === MÉTODOS DE CURSOS (Ponte) ===
+    // Ponte para Cursos
     public List<Curso> getCursos() {
         return registoCursos.getCursos();
     }
 
-    public List<Curso> obterListaCursos() { // Alias para compatibilidade
+    public List<Curso> obterListaCursos() {
         return registoCursos.getCursos();
     }
 
@@ -56,19 +69,76 @@ public class Empresa {
         registoCursos.addCurso(c);
     }
 
+    // ============================================================
+    // === MÉTODOS DO UC7 e UC8 (Candidaturas) ===
+    // ============================================================
+
+    // UC7: Criar nova candidatura vazia
+    public Candidato novaCandidatura() {
+        return new Candidato();
+    }
+
+    // UC7: Registar candidatura, gerar credenciais e enviar email
+    public boolean registarCandidatura(Candidato candidato) {
+        if (!candidato.validar()) {
+            return false;
+        }
+
+        // Gera credenciais
+        String login = candidato.getEmail().toLowerCase();
+        String password = "senha" + (candidatos.size() + 1);
+        Credenciais creds = new Credenciais(login, password);
+
+        candidato.setCredenciais(creds);
+
+        // Envia email simulado
+        serviceEmail.sendEmail(candidato.getEmail(), "Bem-vindo! Credenciais: " + creds.toString());
+
+        // Guarda na lista
+        candidatos.add(candidato);
+
+        return true;
+    }
+
+    // UC8: Obter candidaturas pendentes
+    public List<Candidato> getCandidaturasPendentes() {
+        List<Candidato> pendentes = new ArrayList<>();
+        for (Candidato c : candidatos) {
+            if (c.getEstado() == EstadoMatricula.PENDENTE) {
+                pendentes.add(c);
+            }
+        }
+        return pendentes;
+    }
+
+    // UC8: Registar Decisão (Aceitar/Rejeitar)
+    public void registarDecisao(Candidato candidato, int estadoDecisao, String justificacao) {
+        candidato.setEstado(estadoDecisao);
+        candidato.setJustificacao(justificacao); // Método setJustificacao tem de existir em Candidato
+
+        // Envia notificação da decisão
+        String msg = (estadoDecisao == EstadoMatricula.ACEITE) ? "Candidatura ACEITE!" : "Candidatura REJEITADA. Motivo: " + justificacao;
+        serviceEmail.sendEmail(candidato.getEmail(), msg);
+
+    }
+
+    // ============================================================
+    // === MÉTODOS LEGADOS / AUXILIARES (Compatibilidade) ===
+    // ============================================================
+
     public String gerarCodigoModulo() {
         return "MOD-" + (System.currentTimeMillis() % 10000);
     }
 
     public boolean existeSobreposicaoHorario(Formador f, String horario) {
-        return false; // Simplificado para não dar erro
+        return false;
     }
 
     public boolean registaModulo(Curso c, Modulo m) {
         return c.adicionarModulo(m);
     }
 
-    // === MÉTODOS DE MATRÍCULAS (Usado pelo ValidarMatriculaController) ===
+    // Gestão de Matrículas Antigas (ValidarMatriculaController)
     public void registaMatricula(Matricula m) {
         lstMatriculas.add(m);
     }
@@ -84,7 +154,7 @@ public class Empresa {
     }
 
     public void atualizarMatricula(Matricula m) {
-        // Em memória já está atualizado por referência
+        // Em memória
     }
 
     public void enviarNotificacao(Matricula m, String msg) {
@@ -95,7 +165,7 @@ public class Empresa {
         System.out.println("CA notificado sobre: " + m.getNome());
     }
 
-    // === MÉTODOS DE FORMADORES ===
+    // Gestão de Formadores
     public Formador novoFormador() { return new Formador(); }
 
     public boolean registaFormador(Formador f) {
@@ -115,7 +185,7 @@ public class Empresa {
         return null;
     }
 
-    // === MÉTODOS DE TIPOS DE CURSO ===
+    // Gestão de Tipos de Curso
     public TipoCurso novoTipoCurso() { return new TipoCurso(); }
 
     public boolean especificarTipoCurso(TipoCurso tc) {
@@ -125,7 +195,7 @@ public class Empresa {
 
     public List<TipoCurso> obterListaTiposCurso() { return new ArrayList<>(lstTiposCurso); }
 
-    // === MÉTODOS DE CA ===
+    // Gestão de Coordenadores (CA)
     public CoordenadorAcademico novoCA() { return new CoordenadorAcademico(); }
 
     public boolean registaCA(CoordenadorAcademico ca) {
@@ -136,16 +206,13 @@ public class Empresa {
     public void enviarCredenciaisPorEmail(Object destinatario) {
         System.out.println("Credenciais enviadas.");
     }
+
+    // UC6: Filtrar Cursos por Estado (Ponte)
     public List<Curso> filtrarCursosPorEstado(int indice) {
-        // 1. Validar se o índice é válido
         if (EstadoCurso.NOMES == null || indice < 0 || indice >= EstadoCurso.NOMES.length) {
             return new ArrayList<>();
         }
-
-        // 2. Converter o índice (ex: 0) para Texto (ex: "A iniciar")
         String nomeEstado = EstadoCurso.NOMES[indice];
-
-        // 3. Delegar a pesquisa ao RegistoCursos
         return registoCursos.getCursosPorEstado(nomeEstado);
     }
 }

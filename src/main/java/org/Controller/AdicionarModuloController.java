@@ -7,48 +7,75 @@ import java.util.List;
 public class AdicionarModuloController {
 
     private final Empresa empresa;
+    private final RegistoCursos registoCursos;
+
+    // Variáveis de estado para guardar o contexto durante a execução
     private Curso cursoSelecionado;
-    private Modulo modulo;
+    private Modulo moduloEmConstrucao;
 
-    // Construtor: recebe a empresa para aceder aos dados
-    public AdicionarModuloController(Empresa empresa) { this.empresa = empresa; }
-
-    // Devolve a lista completa de cursos da empresa
-    public List<Curso> obterCursos() { return empresa.obterListaCursos(); }
-
-    // Devolve a lista completa de formadores
-    public List<Formador> obterFormadores() { return empresa.obterListaFormadores(); }
-
-    // Seleciona um curso da lista pelo índice (0-based)
-    public void selecionarCurso(int idx) {
-        List<Curso> c = obterCursos();
-        if (idx >= 0 && idx < c.size()) cursoSelecionado = c.get(idx);
+    public AdicionarModuloController(Empresa empresa) {
+        this.empresa = empresa;
+        // Obtém o registo através da Empresa (Facade)
+        this.registoCursos = empresa.getRegistoCursos();
     }
 
-    // Cria um novo módulo com os dados fornecidos
-    public void criarModulo(String titulo, int ch, Data dataI, Data dataF,
-                            String horario, Formador formador) {
-        modulo = new Modulo();
-        modulo.setTitulo(titulo);
-        modulo.setCargaHoraria(ch);
-        modulo.setDataInicio(dataI);
-        modulo.setDataConclusao(dataF);
-        modulo.setHorario(horario);
-        modulo.setFormadorResponsavel(formador);
-        modulo.setCodigo(empresa.gerarCodigoModulo());
+    // Passo 1: Listar Cursos
+    public List<Curso> obterListaCursos() {
+        return registoCursos.getCursos();
     }
 
-    // Verifica se o formador não tem conflito de horário
-    public boolean dadosOk() {
-        return !empresa.existeSobreposicaoHorario(modulo.getFormadorResponsavel(), modulo.getHorario());
+    // Passo 2: Selecionar Curso
+    public boolean selecionarCurso(String sigla) {
+        this.cursoSelecionado = registoCursos.getCurso(sigla);
+        return this.cursoSelecionado != null;
     }
 
-    // Regista o módulo no curso selecionado
+    // Passo 3: Criar Módulo (Factory no Registo)
+    public void criarModulo(String titulo, int cargaHoraria, Data dataInicio,
+                            Data dataFim, String horario, Formador formador, double ponderacao) {
+
+        // Factory Method: O Registo cria o objeto
+        this.moduloEmConstrucao = registoCursos.novoModulo();
+
+        // Define os dados
+        this.moduloEmConstrucao.setTitulo(titulo);
+        this.moduloEmConstrucao.setCargaHoraria(cargaHoraria);
+        this.moduloEmConstrucao.setDataInicio(dataInicio);
+        this.moduloEmConstrucao.setDataConclusao(dataFim);
+        this.moduloEmConstrucao.setHorario(horario);
+        this.moduloEmConstrucao.setFormador(formador);
+        this.moduloEmConstrucao.setPonderacao(ponderacao);
+
+        // Gera código automático
+        this.moduloEmConstrucao.setCodigo(empresa.gerarCodigoModulo());
+    }
+
+    // Passo 4: Adicionar Sessão
+    public void adicionarSessao(Data data, int duracao, String localizacao) {
+        if (this.moduloEmConstrucao != null) {
+            // Factory Method para sessão
+            Sessao sessao = registoCursos.novaSessao();
+
+            sessao.setDados(data, duracao, localizacao);
+
+            this.moduloEmConstrucao.addSessao(sessao);
+        }
+    }
+
+    // Passo 5: Confirmar e Gravar
     public boolean confirmarRegisto() {
-        if (cursoSelecionado == null || modulo == null) return false;
-        return empresa.registaModulo(cursoSelecionado, modulo);
+        if (cursoSelecionado != null && moduloEmConstrucao != null) {
+
+        }
+        return false;
     }
 
-    // Devolve a representação em texto do módulo criado
-    public String getDadosModulo() { return modulo.toString(); }
+    // Auxiliares para a UI
+    public List<Formador> obterFormadores() {
+        return empresa.obterListaFormadores();
+    }
+
+    public String getDadosModulo() {
+        return moduloEmConstrucao != null ? moduloEmConstrucao.toString() : "";
+    }
 }
