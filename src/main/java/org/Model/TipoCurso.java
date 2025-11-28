@@ -56,7 +56,7 @@ public class TipoCurso {
     }
 
 
-    // === toString melhorado (mantém o original + formatação) ===
+    // === toString melhorado
     @Override
     public String toString() {
         return String.format("TipoCurso [Sigla: %s | Descrição: %s]", sigla, descricao);

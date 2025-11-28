@@ -22,7 +22,7 @@ public class InscreverAluno_UI {
     public void run() throws IOException {
         System.out.println("\n=== Inscrever Aluno em Curso ===");
 
-        // 1. Seleciona o aluno (CORRIGIDO)
+        // 1. Seleciona o aluno
         Aluno aluno = selecionaAluno();
         if (aluno == null) {
             System.out.println("Operação cancelada.");
@@ -31,7 +31,7 @@ public class InscreverAluno_UI {
 
         System.out.println("Aluno selecionado: " + aluno.getNome());
 
-        // 2. Lista cursos disponíveis (CORRIGIDO)
+        // 2. Lista cursos disponíveis
         List<Curso> cursos = controller.listAvailableCourses();
         if (cursos.isEmpty()) {
             System.out.println("Nenhum curso disponível para inscrição.");
@@ -61,7 +61,7 @@ public class InscreverAluno_UI {
         }
     }
 
-    // Método auxiliar adicionado (baseado em AnularInscricao_UI)
+    // Método auxiliar (baseado em AnularInscricao_UI)
     private Aluno selecionaAluno() {
         List<Aluno> alunos = empresa.getAlunos(); // Busca alunos da Empresa
         if (alunos.isEmpty()) {
@@ -83,7 +83,4 @@ public class InscreverAluno_UI {
         System.out.println("Opção inválida.");
         return null;
     }
-
-    /* O método listAvailableCourses original foi removido pois a sua lógica
-       foi integrada no run() e não pedia o ID do curso, apenas o listava. */
 }

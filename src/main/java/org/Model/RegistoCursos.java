@@ -24,8 +24,13 @@ public class RegistoCursos {
         return new Sessao(null, 0, "");
     }
 
-    public void addCurso(Curso c) {
-        this.cursos.add(c);
+    public boolean addCurso(Curso c) {
+        // 1. Valida se a sigla é única
+        if (validarCurso(c)) {
+            this.cursos.add(c);
+            return true; // Sucesso
+        }
+        return false; // Falha (já existe)
     }
 
     public List<Curso> getCursos() {
@@ -85,7 +90,6 @@ public class RegistoCursos {
     }
 
     // === UC11: CONSULTAR CURSOS (FORMADOR) ===
-    // Este é um dos métodos que te faltava!
     public List<Curso> getCursosDoFormador(Formador formador) {
         List<Curso> lista = new ArrayList<>();
         for (Curso c : cursos) {
@@ -98,7 +102,6 @@ public class RegistoCursos {
     }
 
     // === UC15: REGISTAR CLASSIFICAÇÕES ===
-    // Estes são os outros métodos que te faltavam!
     public List<Modulo> getModulosPorFormador(Curso curso, Formador formador) {
         List<Modulo> lista = new ArrayList<>();
         for (Modulo m : curso.getModulos()) {
@@ -129,5 +132,40 @@ public class RegistoCursos {
             }
         }
         return lista;
+    }
+    public boolean validarCurso(Curso c) {
+        for (Curso existente : cursos) {
+            if (existente.getSigla().equalsIgnoreCase(c.getSigla())) {
+                return false; // Erro: Já existe!
+            }
+        }
+        return true;
+    }
+
+    // === UC5: VALIDAÇÃO DE SESSÕES (Conflito de Sala/Data) ===
+
+    public boolean validarSessao(Sessao novaSessao) {
+        // Percorre TODOS os cursos registados
+        for (Curso c : cursos) {
+            // Percorre TODOS os módulos de cada curso
+            for (Modulo m : c.getModulos()) {
+                // Percorre TODAS as sessões já marcadas
+                for (Sessao sExistente : m.getSessoes()) {
+
+                    // Verifica se é no mesmo DIA
+                    boolean mesmoDia = sExistente.getData().equals(novaSessao.getData());
+
+                    // Verifica se é na mesma SALA
+                    boolean mesmaSala = sExistente.getSala().equalsIgnoreCase(novaSessao.getSala());
+
+                    if (mesmoDia && mesmaSala) {
+                        System.out.println("ERRO: Conflito detetado! A sala " + novaSessao.getSala() +
+                                " já está ocupada no dia " + novaSessao.getData());
+                        return false; // Inválido (Sobreposição)
+                    }
+                }
+            }
+        }
+        return true; // Válido (Sem conflitos)
     }
 }

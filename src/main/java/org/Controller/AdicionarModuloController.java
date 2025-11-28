@@ -51,15 +51,21 @@ public class AdicionarModuloController {
     }
 
     // Passo 4: Adicionar Sessão
-    public void adicionarSessao(Data data, int duracao, String localizacao) {
+    public boolean adicionarSessao(Data data, int duracao, String localizacao) {
         if (this.moduloEmConstrucao != null) {
-            // Factory Method para sessão
             Sessao sessao = registoCursos.novaSessao();
-
             sessao.setDados(data, duracao, localizacao);
 
-            this.moduloEmConstrucao.addSessao(sessao);
+            // === NOVA VALIDAÇÃO AQUI ===
+            if (registoCursos.validarSessao(sessao)) {
+                this.moduloEmConstrucao.addSessao(sessao);
+                return true;
+            } else {
+                System.out.println("Erro: Sala ocupada nessa data!");
+                return false;
+            }
         }
+        return false;
     }
 
     // Passo 5: Confirmar e Gravar

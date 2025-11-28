@@ -14,7 +14,6 @@ public class Sessao {
         this.sala = sala;
     }
 
-    // === ESTE É O MÉTODO QUE FALTAVA ===
     public void setDados(Data data, int duracao, String sala) {
         this.data = data;
         this.duracaoHoras = duracao;
