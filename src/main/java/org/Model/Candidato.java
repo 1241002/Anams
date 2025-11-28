@@ -14,7 +14,7 @@ public class Candidato {
     private String justificacao; // Para o UC8 (Rejeição)
 
     public Candidato() {
-        this.estado = EstadoMatricula.PENDENTE; // Usa a constante que já tens
+        this.estado = EstadoCandidatura.PENDENTE; // Usa a constante que já tens
     }
 
     // === Getters e Setters ===

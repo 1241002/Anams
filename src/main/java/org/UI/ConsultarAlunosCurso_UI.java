@@ -65,8 +65,19 @@ public class ConsultarAlunosCurso_UI {
         if (lista.isEmpty()) {
             System.out.println("Não existem formadores no sistema.");
             return null;
-
         }
+
+        // === CORREÇÃO AQUI ===
+        System.out.println("\nSelecione o Formador:");
+        int i = 0;
+        for(Formador f : lista) {
+            System.out.println(++i + ". " + f.getNome());
+        }
+        int op = Utils.IntFromConsole("Opção: ") - 1;
+
+        if (op >= 0 && op < lista.size()) return lista.get(op);
+
+        System.out.println("Opção inválida.");
         return null;
     }
 }

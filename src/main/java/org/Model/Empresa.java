@@ -104,7 +104,7 @@ public class Empresa {
     public List<Candidato> getCandidaturasPendentes() {
         List<Candidato> pendentes = new ArrayList<>();
         for (Candidato c : candidatos) {
-            if (c.getEstado() == EstadoMatricula.PENDENTE) {
+            if (c.getEstado() == EstadoCandidatura.PENDENTE) {
                 pendentes.add(c);
             }
         }
@@ -118,7 +118,7 @@ public class Empresa {
         candidato.setJustificacao(justificacao);
 
         // 2. SE ACEITE -> CRIAR O ALUNO AUTOMATICAMENTE
-        if (estadoDecisao == EstadoMatricula.ACEITE) {
+        if (estadoDecisao == EstadoCandidatura.ACEITE) {
             Aluno novoAluno = registoAlunos.novoAluno();
 
             // Copiar dados do Candidato para o Aluno
@@ -133,7 +133,7 @@ public class Empresa {
         }
 
         // 3. Envia notificação da decisão
-        String msg = (estadoDecisao == EstadoMatricula.ACEITE) ? "Candidatura ACEITE! Bem-vindo." : "Candidatura REJEITADA. Motivo: " + justificacao;
+        String msg = (estadoDecisao == EstadoCandidatura.ACEITE) ? "Candidatura ACEITE! Bem-vindo." : "Candidatura REJEITADA. Motivo: " + justificacao;
         serviceEmail.sendEmail(candidato.getEmail(), msg);
     }
 
