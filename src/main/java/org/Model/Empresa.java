@@ -104,22 +104,21 @@ public class Empresa {
     public List<Candidato> getCandidaturasPendentes() {
         List<Candidato> pendentes = new ArrayList<>();
         for (Candidato c : candidatos) {
-            if (c.getEstado() == EstadoMatricula.PENDENTE) {
+            if (c.getEstado() == EstadoCandidatura.PENDENTE) {
                 pendentes.add(c);
             }
         }
         return pendentes;
     }
 
-    // UC8: Registar Decisão (Aceitar/Rejeitar)
+    // === UC8: CORRIGIDO - Lógica de Criação de Aluno ===
     public void registarDecisao(Candidato candidato, int estadoDecisao, String justificacao) {
-        // 1. Atualizar o estado do candidato
+        // 1. Atualizar estado da candidatura
         candidato.setEstado(estadoDecisao);
         candidato.setJustificacao(justificacao);
 
-        // 2. Lógica Crítica: Se for ACEITE, criar o Aluno
-        if (estadoDecisao == EstadoMatricula.ACEITE) {
-            // Criar novo aluno
+        // 2. SE ACEITE -> CRIAR O ALUNO AUTOMATICAMENTE
+        if (estadoDecisao == EstadoCandidatura.ACEITE) {
             Aluno novoAluno = registoAlunos.novoAluno();
 
             // Copiar dados do Candidato para o Aluno
@@ -127,19 +126,15 @@ public class Empresa {
             novoAluno.setEmail(candidato.getEmail());
             novoAluno.setCc(candidato.getCc());
 
-            // Adicionar ao Registo de Alunos (Faltava isto!)
+            // Adicionar ao Registo de Alunos
             registoAlunos.addAluno(novoAluno);
 
-            System.out.println("[Sistema] Novo aluno criado e registado: " + novoAluno.getNome());
+            System.out.println(">> SISTEMA: Aluno criado e registado automaticamente: " + novoAluno.getNome());
         }
 
-        // 3. Enviar notificação
-        String msg = (estadoDecisao == EstadoMatricula.ACEITE)
-                ? "Parabéns! A sua candidatura foi ACEITE. Já é aluno."
-                : "Candidatura REJEITADA. Motivo: " + justificacao;
-
+        // 3. Envia notificação da decisão
+        String msg = (estadoDecisao == EstadoCandidatura.ACEITE) ? "Candidatura ACEITE! Bem-vindo." : "Candidatura REJEITADA. Motivo: " + justificacao;
         serviceEmail.sendEmail(candidato.getEmail(), msg);
-
     }
 
     // ============================================================

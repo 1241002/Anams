@@ -2,7 +2,7 @@ package org.Controller;
 
 import org.Model.Candidato;
 import org.Model.Empresa;
-import org.Model.EstadoMatricula;
+import org.Model.EstadoCandidatura;
 import java.util.List;
 
 public class ValidarCandidatura_Controller {
@@ -21,11 +21,11 @@ public class ValidarCandidatura_Controller {
     // 2. Registar a decisão (Aceitar)
     public void aceitarCandidatura(Candidato candidato) {
         // "Candidatura aceite"
-        empresa.registarDecisao(candidato, EstadoMatricula.ACEITE, "Candidatura aceite. Bem-vindo!");
+        empresa.registarDecisao(candidato, EstadoCandidatura.ACEITE, "Candidatura aceite. Bem-vindo!");
     }
 
     // 3. Registar a decisão (Rejeitar)
     public void rejeitarCandidatura(Candidato candidato, String motivo) {
-        empresa.registarDecisao(candidato, EstadoMatricula.REJEITADA, motivo);
+        empresa.registarDecisao(candidato, EstadoCandidatura.REJEITADA, motivo);
     }
 }
