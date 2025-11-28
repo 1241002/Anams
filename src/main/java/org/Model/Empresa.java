@@ -25,7 +25,6 @@ public class Empresa {
         this.lstTiposCurso = new ArrayList<>();
         this.lstCA = new ArrayList<>();
         this.lstFormadores = new ArrayList<>();
-        // this.lstMatriculas = new ArrayList<>();
 
         // Inicialização dos novos registos
         this.registoCursos = new RegistoCursos();
@@ -83,7 +82,6 @@ public class Empresa {
         if (!candidato.validar()) {
             return false;
         }
-
         // Gera credenciais
         String login = candidato.getEmail().toLowerCase();
         String password = "senha" + (candidatos.size() + 1);
